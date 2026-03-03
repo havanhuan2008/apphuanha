@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Liên hệ • HH SUPER</title>
+
+  <!-- Fonts (tròn đẹp hơn) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Be+Vietnam+Pro:wght@400;600;800;900&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root{
+      /* ============ TỐC ĐỘ HIỆU ỨNG (slow motion mượt) ============ */
+      --spd: 1.18; /* tăng lên => chậm/mượt hơn | giảm => nhanh hơn */
+
+      /* GOLD THEME */
+      --goldA:#fff9cf;
+      --goldB:#ffd24a;
+      --goldC:#ffb300;
+
+      /* ACCENT */
+      --cyan:#7cf7ff;
+      --mag:#ff86ff;
+      --vio:#c77dff;
+
+      /* BACKGROUND */
+      --bg:#050812;
+      --glass: rgba(10, 14, 26, 0.62);
+
+      /* TEXT */
+      --text: rgba(255, 236, 168, 0.94);
+      --textSoft: rgba(255, 236, 168, 0.78);
+      --textDim: rgba(255, 236, 168, 0.62);
+
+      /* BORDER + SHAPE */
+      --stroke: rgba(255, 210, 74, 0.20);
+      --stroke2: rgba(124, 247, 255, 0.18);
+
+      /* Bevel/Octagon clip */
+      --cut: 14px;
+      --clip: polygon(
+        var(--cut) 0,
+        calc(100% - var(--cut)) 0,
+        100% var(--cut),
+        100% calc(100% - var(--cut)),
+        calc(100% - var(--cut)) 100%,
+        var(--cut) 100%,
+        0 calc(100% - var(--cut)),
+        0 var(--cut)
+      );
+
+      /* Background image */
+      --app-bg-image: url("https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=2400&q=80");
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:"Nunito","Be Vietnam Pro", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color:var(--text);
+      background: var(--bg);
+      overflow-x:hidden;
+      letter-spacing: .15px;
+      text-rendering: geometricPrecision;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ============ BACKDROP (ảnh + lớp gradient) ============ */
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      background-image: var(--app-bg-image);
+      background-size:cover;
+      background-position:center;
+      filter:saturate(1.10) contrast(1.08);
+      transform: scale(1.08);
+      z-index:-10;
+      will-change: transform;
+    }
+    body::after{
+      content:"";
+      position:fixed; inset:0;
+      background:
+        radial-gradient(1000px 620px at 12% 12%, rgba(255,210,74,0.22), transparent 62%),
+        radial-gradient(980px 560px at 86% 28%, rgba(0,215,255,0.15), transparent 60%),
+        radial-gradient(980px 560px at 70% 88%, rgba(199,125,255,0.15), transparent 60%),
+        linear-gradient(180deg, rgba(3,6,14,0.72), rgba(3,6,14,0.92));
+      z-index:-9;
+    }
+
+    /* ============ HIỆU ỨNG NỀN: ORBS / NOISE / SCANLINE ============ */
+    .fx{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:-8;
+      overflow:hidden;
+    }
+    .fx::before{
+      /* noise */
+      content:"";
+      position:absolute; inset:-50%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.16'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+      opacity:.25;
+      transform: rotate(8deg);
+      animation: noiseMove calc(9s * var(--spd)) linear infinite;
+    }
+    .fx::after{
+      /* scanline */
+      content:"";
+      position:absolute; inset:0;
+      background: repeating-linear-gradient(
+        180deg,
+        rgba(255,210,74,0.00) 0px,
+        rgba(255,210,74,0.00) 7px,
+        rgba(124,247,255,0.025) 8px
+      );
+      opacity:.35;
+      mix-blend-mode: soft-light;
+      animation: scan calc(6.5s * var(--spd)) linear infinite;
+    }
+
+    @keyframes noiseMove{
+      0%{ transform: translate3d(-2%, -2%, 0) rotate(8deg); }
+      100%{ transform: translate3d(2%, 2%, 0) rotate(8deg); }
+    }
+    @keyframes scan{
+      0%{ transform: translateY(-12px); }
+      100%{ transform: translateY(12px); }
+    }
+
+    .orb{
+      position:absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 999px;
+      filter: blur(38px);
+      opacity:.26;
+      mix-blend-mode: screen;
+      transform: translate3d(0,0,0);
+      will-change: transform;
+      animation: drift calc(14s * var(--spd)) ease-in-out infinite;
+    }
+    .orb.o1{ left:-120px; top:-130px; background: radial-gradient(circle at 30% 30%, rgba(255,210,74,.55), transparent 62%); animation-duration: calc(16s * var(--spd)); }
+    .orb.o2{ right:-160px; top:80px; background: radial-gradient(circle at 40% 40%, rgba(124,247,255,.45), transparent 62%); animation-duration: calc(17.5s * var(--spd)); }
+    .orb.o3{ left: 10%; bottom:-220px; background: radial-gradient(circle at 35% 35%, rgba(199,125,255,.45), transparent 62%); animation-duration: calc(18.5s * var(--spd)); }
+    .orb.o4{ right: 16%; bottom:-260px; background: radial-gradient(circle at 40% 40%, rgba(255,134,255,.35), transparent 62%); animation-duration: calc(20s * var(--spd)); }
+
+    @keyframes drift{
+      0%,100%{ transform: translate3d(0,0,0) scale(1); }
+      50%{ transform: translate3d(0,-18px,0) scale(1.04); }
+    }
+
+    /* Particles */
+    .spark{
+      position:absolute;
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,210,74,.9), rgba(255,210,74,0) 65%);
+      opacity:.35;
+      filter: blur(.2px);
+      animation: sparkle calc(7.5s * var(--spd)) linear infinite;
+    }
+    @keyframes sparkle{
+      0%{ transform: translate3d(var(--x), calc(var(--y) + 40px), 0) scale(.65); opacity: 0; }
+      10%{ opacity:.45; }
+      50%{ opacity:.28; }
+      100%{ transform: translate3d(calc(var(--x) + 40px), calc(var(--y) - 70px), 0) scale(1.1); opacity: 0; }
+    }
+
+    /* Animations */
+    @keyframes shimmer { 0%{background-position:-220% 0} 100%{background-position:220% 0} }
+    @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+    @keyframes pulseGlow { 0%,100%{opacity:.55} 50%{opacity:.90} }
+    @keyframes toastIn { from{transform:translateY(14px); opacity:0} to{transform:translateY(0); opacity:1} }
+    @keyframes pageIn { from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:translateY(0)} }
+
+    /* Layout */
+    .wrap{
+      width:min(1040px, 94vw);
+      margin: 0 auto;
+      padding: 18px 0 30px;
+      animation: pageIn calc(.55s * var(--spd)) ease-out both;
+    }
+    .stack{
+      margin-top: 14px;
+      display:grid;
+      gap: 14px;
+    }
+
+    /* Shared "frame" */
+    .frame{
+      position:relative;
+      background: var(--glass);
+      border: 1px solid var(--stroke);
+      box-shadow: 0 26px 70px rgba(0,0,0,0.46);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-radius: 22px; /* fallback */
+      clip-path: var(--clip);
+      overflow:hidden;
+      isolation:isolate;
+    }
+    .frame::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(120deg,
+        rgba(255,210,74,0.26),
+        rgba(124,247,255,0.18),
+        rgba(199,125,255,0.16),
+        rgba(255,134,255,0.14),
+        transparent 64%
+      );
+      filter: blur(18px);
+      opacity:.62;
+      animation: pulseGlow calc(3.4s * var(--spd)) ease-in-out infinite;
+      pointer-events:none;
+      z-index:-1;
+    }
+
+    /* GOLD GLOW TEXT */
+    .gold-glow{
+      text-shadow:
+        0 0 10px rgba(255,210,74,0.26),
+        0 0 18px rgba(255,210,74,0.14);
+    }
+
+    /* Reveal */
+    .reveal{
+      opacity:0;
+      transform: translateY(10px);
+      transition: opacity calc(.55s * var(--spd)) ease, transform calc(.55s * var(--spd)) ease;
+      will-change: opacity, transform;
+    }
+    .reveal.in{
+      opacity:1;
+      transform: translateY(0);
+    }
+
+    /* Header */
+    .header{
+      padding: 14px 14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .left{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
+
+    /* Crown */
+    .crown{
+      width:52px;height:52px;
+      display:grid;
+      place-items:center;
+      border:1px solid rgba(255,210,74,0.18);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 18px 44px rgba(0,0,0,0.30);
+      clip-path: var(--clip);
+      animation: float calc(4.2s * var(--spd)) ease-in-out infinite;
+      flex:0 0 auto;
+    }
+    .crown i{
+      font-size: 22px;
+      background: linear-gradient(90deg, var(--goldA), var(--goldB), var(--cyan), var(--mag));
+      background-size: 240% 100%;
+      -webkit-background-clip:text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer calc(2.6s * var(--spd)) linear infinite;
+      filter: drop-shadow(0 0 14px rgba(255,210,74,0.22));
+    }
+
+    .title{
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+      min-width:0;
+    }
+    .title strong{
+      font-family:"Cinzel", serif;
+      font-size: 19px;
+      font-weight: 900;
+      letter-spacing: 1.4px;
+      background: linear-gradient(90deg, var(--goldA), var(--goldB), var(--cyan), var(--mag));
+      background-size: 260% 100%;
+      -webkit-background-clip:text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer calc(2.6s * var(--spd)) linear infinite;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .title span{
+      font-size: 13.8px;
+      font-weight: 900;
+      letter-spacing: .7px;
+      color: var(--textSoft);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    /* Buttons */
+    .btn{
+      text-decoration:none;
+      border:none;
+      cursor:pointer;
+      padding: 12px 16px;
+      font-weight: 900;
+      font-size: 14px;
+      letter-spacing: .6px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,210,74,0.20);
+      color: var(--goldB);
+      box-shadow: 0 18px 44px rgba(0,0,0,0.30);
+      transition:
+        transform calc(.18s * var(--spd)) ease,
+        background calc(.18s * var(--spd)) ease,
+        box-shadow calc(.18s * var(--spd)) ease,
+        border-color calc(.18s * var(--spd)) ease,
+        filter calc(.18s * var(--spd)) ease;
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      position:relative;
+      overflow:hidden;
+      clip-path: var(--clip);
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn::before{
+      content:"";
+      position:absolute; inset:0;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.24), transparent);
+      transform: translateX(-120%);
+      transition: transform calc(.7s * var(--spd)) ease;
+      opacity:.80;
+    }
+    .btn:hover{
+      transform: translateY(-2px);
+      background: rgba(255,255,255,0.09);
+      border-color: rgba(124,247,255,0.24);
+      box-shadow: 0 22px 54px rgba(0,0,0,0.36);
+      filter: saturate(1.05);
+    }
+    .btn:hover::before{ transform: translateX(120%); }
+    .btn i{
+      color: var(--goldA);
+      filter: drop-shadow(0 0 12px rgba(255,210,74,0.20));
+    }
+    .btn--mini{
+      padding: 10px 12px;
+      font-size: 13px;
+      gap:8px;
+    }
+    .btn--ghost{
+      background: rgba(0,0,0,0.10);
+      border-color: rgba(255,210,74,0.18);
+    }
+    .btn:active{ transform: translateY(0); }
+
+    /* Ripple */
+    .ripple{
+      position:absolute;
+      border-radius: 999px;
+      transform: translate(-50%, -50%);
+      background: radial-gradient(circle, rgba(255,210,74,.42), rgba(124,247,255,.12), rgba(255,210,74,0) 70%);
+      pointer-events:none;
+      width: 10px;
+      height: 10px;
+      animation: rippleOut calc(.75s * var(--spd)) ease-out forwards;
+      mix-blend-mode: screen;
+    }
+    @keyframes rippleOut{
+      from{ opacity:.9; width: 10px; height: 10px; }
+      to{ opacity:0; width: 360px; height: 360px; }
+    }
+
+    /* Card */
+    .card{ padding: 16px; }
+    .card h4{
+      margin:0 0 10px;
+      font-size: 16.8px;
+      font-weight: 900;
+      letter-spacing: .9px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color: var(--goldA);
+    }
+    .card h4 i{
+      color: var(--goldB);
+      filter: drop-shadow(0 0 14px rgba(255,210,74,0.20));
+    }
+    .card p{
+      margin:0 0 14px;
+      font-size: 14.2px;
+      line-height: 1.85;
+      letter-spacing: .25px;
+      color: var(--textSoft);
+    }
+
+    /* Contact grid */
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 860px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .contact-item{
+      padding: 14px;
+      border: 1px solid rgba(124,247,255,0.12);
+      background: rgba(255,255,255,0.06);
+      box-shadow: 0 18px 44px rgba(0,0,0,0.28);
+      border-radius: 18px; /* fallback */
+      clip-path: var(--clip);
+      position:relative;
+      overflow:hidden;
+      isolation:isolate;
+      transition:
+        transform calc(.18s * var(--spd)) ease,
+        border-color calc(.18s * var(--spd)) ease,
+        box-shadow calc(.18s * var(--spd)) ease;
+      will-change: transform;
+    }
+    .contact-item::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: linear-gradient(120deg, rgba(0,215,255,0.14), rgba(255,210,74,0.12), transparent 64%);
+      filter: blur(18px);
+      opacity:.58;
+      pointer-events:none;
+      z-index:-1;
+    }
+    .contact-item:hover{
+      transform: translateY(-4px);
+      border-color: rgba(255,210,74,0.30);
+      box-shadow: 0 26px 62px rgba(0,0,0,0.36);
+    }
+
+    .contact-top{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .ic{
+      width:46px;height:46px;
+      display:grid;
+      place-items:center;
+      background: rgba(0,0,0,0.14);
+      border: 1px solid rgba(255,210,74,0.18);
+      clip-path: var(--clip);
+      flex:0 0 auto;
+    }
+    .ic i{
+      font-size: 18px;
+      color: var(--goldA);
+      filter: drop-shadow(0 0 12px rgba(255,210,74,0.20));
+    }
+    .meta{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .meta .name{
+      font-weight: 900;
+      letter-spacing: .7px;
+      color: var(--goldA);
+    }
+    .meta .sub{
+      font-size: 12.8px;
+      letter-spacing: .55px;
+      color: var(--textDim);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .badge{
+      margin-left:auto;
+      font-weight: 900;
+      font-size: 11.5px;
+      letter-spacing: 1px;
+      padding: 7px 10px;
+      color: rgba(255, 236, 168, 0.96);
+      background: rgba(255,210,74,0.10);
+      border: 1px solid rgba(255,210,74,0.22);
+      clip-path: var(--clip);
+      text-transform: uppercase;
+    }
+
+    .kv{
+      display:grid;
+      grid-template-columns: 84px 1fr;
+      gap: 8px;
+      align-items:start;
+      margin: 8px 0;
+    }
+    .kv .k{
+      font-size: 12.4px;
+      font-weight: 900;
+      letter-spacing: .65px;
+      color: var(--textDim);
+    }
+    .kv .v{
+      font-size: 13.7px;
+      font-weight: 900;
+      letter-spacing: .45px;
+      color: var(--goldA);
+      word-break: break-word;
+    }
+    .link{
+      color: var(--goldB);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(255,210,74,0.32);
+      transition: border-color calc(.18s * var(--spd)) ease, filter calc(.18s * var(--spd)) ease;
+    }
+    .link:hover{
+      border-bottom-color: rgba(124,247,255,0.45);
+      filter: brightness(1.05);
+    }
+
+    .actions{
+      margin-top: 12px;
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* Social */
+    .social-grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 980px){
+      .social-grid{ grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 520px){
+      .social-grid{ grid-template-columns: 1fr; }
+    }
+
+    .social-box{
+      text-decoration:none;
+      color: var(--goldA);
+      padding: 14px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,210,74,0.14);
+      box-shadow: 0 18px 44px rgba(0,0,0,0.26);
+      border-radius: 18px;
+      clip-path: var(--clip);
+      position:relative;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 12px;
+      transition:
+        transform calc(.18s * var(--spd)) ease,
+        border-color calc(.18s * var(--spd)) ease,
+        box-shadow calc(.18s * var(--spd)) ease,
+        filter calc(.18s * var(--spd)) ease;
+      will-change: transform;
+    }
+    .social-box::before{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(700px 380px at 20% 20%, rgba(255,210,74,0.16), transparent 60%),
+                  radial-gradient(700px 380px at 80% 30%, rgba(124,247,255,0.11), transparent 60%);
+      filter: blur(18px);
+      opacity:.62;
+      pointer-events:none;
+      z-index:-1;
+    }
+    .social-box:hover{
+      transform: translateY(-4px);
+      border-color: rgba(124,247,255,0.24);
+      box-shadow: 0 26px 62px rgba(0,0,0,0.34);
+      filter: saturate(1.05);
+    }
+
+    .social-ic{
+      width:52px;height:52px;
+      display:grid;
+      place-items:center;
+      background: rgba(0,0,0,0.14);
+      border: 1px solid rgba(255,210,74,0.18);
+      clip-path: var(--clip);
+      flex:0 0 auto;
+    }
+    .social-ic i{
+      font-size: 20px;
+      color: var(--goldA);
+      filter: drop-shadow(0 0 14px rgba(255,210,74,0.22));
+    }
+    .social-text{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+    }
+    .social-text .top{
+      font-weight: 900;
+      letter-spacing: .8px;
+      color: var(--goldA);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .social-text .bot{
+      font-size: 12.8px;
+      letter-spacing: .55px;
+      color: var(--textDim);
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .social-cta{
+      margin-left:auto;
+      font-weight: 900;
+      font-size: 12.2px;
+      letter-spacing: 1px;
+      padding: 9px 12px;
+      color: rgba(255, 236, 168, 0.96);
+      background: rgba(255,210,74,0.10);
+      border: 1px solid rgba(255,210,74,0.22);
+      clip-path: var(--clip);
+      text-transform: uppercase;
+      white-space:nowrap;
+    }
+
+    /* Footer */
+    .footer{
+      padding: 14px 16px;
+      text-align:center;
+      font-weight: 900;
+      letter-spacing: .8px;
+      color: var(--textDim);
+    }
+
+    /* Toast */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 16px;
+      transform: translateX(-50%);
+      background: rgba(8, 10, 18, 0.78);
+      border: 1px solid rgba(255,210,74,0.22);
+      color: var(--goldA);
+      padding: 12px 14px;
+      box-shadow: 0 22px 60px rgba(0,0,0,0.50);
+      clip-path: var(--clip);
+      border-radius: 16px;
+      letter-spacing: .6px;
+      font-weight: 900;
+      opacity:0;
+      pointer-events:none;
+      z-index: 9999;
+      min-width: min(520px, 92vw);
+      text-align:center;
+    }
+    .toast.show{
+      opacity:1;
+      animation: toastIn calc(.18s * var(--spd)) ease-out;
+    }
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce){
+      *{ animation:none !important; transition:none !important; }
+      body::before{ transform:none !important; }
+      .reveal{ opacity:1 !important; transform:none !important; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- FX LAYERS -->
+  <div class="fx" aria-hidden="true">
+    <div class="orb o1"></div>
+    <div class="orb o2"></div>
+    <div class="orb o3"></div>
+    <div class="orb o4"></div>
+    <!-- sparks will be injected by JS -->
+  </div>
+
+  <div class="wrap">
+    <!-- HEADER -->
+    <div class="header frame reveal tilt" data-tilt="1.0">
+      <div class="left">
+        <div class="crown" aria-hidden="true"><i class="fa-solid fa-crown"></i></div>
+        <div class="title">
+          <strong class="gold-glow">HH SUPER</strong>
+          <span class="gold-glow">Trang liên hệ</span>
+        </div>
+      </div>
+
+      <a class="btn gold-glow magnetic" href="index.html" title="Quay lại trang chủ">
+        <i class="fa-solid fa-arrow-left"></i> Quay lại
+      </a>
+    </div>
+
+    <main class="stack">
+      <!-- CONTACT CARD -->
+      <section class="card frame reveal tilt" data-tilt="1.1" id="contactCard">
+        <h4 class="gold-glow"><i class="fa-solid fa-headset"></i> Liên hệ hỗ trợ</h4>
+        <p class="gold-glow">
+          Trang này là kênh liên hệ chính thức của <b>HH SUPER</b>. Được Thiết Kế Một Cách Công Tâm Và Nhằm Mục Đích Mang Đến Cho Người Dùng Trải Nghiệm Một Cách Tuyệt Vời Nhất
+        </p>
+
+        <div class="grid">
+          <!-- Facebook -->
+          <article class="contact-item gold-glow reveal tilt" data-tilt="1.2" id="boxFacebook">
+            <div class="contact-top">
+              <div class="ic"><i class="fa-brands fa-facebook-f"></i></div>
+              <div class="meta">
+                <div class="name">Facebook</div>
+                <div class="sub">Kênh hỗ trợ / thông báo chính</div>
+              </div>
+              <div class="badge">Official</div>
+            </div>
+
+            <div class="kv">
+              <div class="k">Kênh</div>
+              <div class="v" id="fbName">HVH Dev</div>
+            </div>
+            <div class="kv">
+              <div class="k">Link</div>
+              <a class="v link" id="fbLink" href="#" target="_blank" rel="noopener">—</a>
+            </div>
+
+            <div class="actions">
+              <a class="btn btn--mini gold-glow magnetic" id="fbOpen" href="#" target="_blank" rel="noopener">
+                <i class="fa-solid fa-up-right-from-square"></i> Mở
+              </a>
+              <button class="btn btn--mini btn--ghost gold-glow copy-btn magnetic" type="button" data-copy="">
+                <i class="fa-solid fa-copy"></i> Sao chép link
+              </button>
+            </div>
+          </article>
+
+          <!-- Email -->
+          <article class="contact-item gold-glow reveal tilt" data-tilt="1.2" id="boxEmail">
+            <div class="contact-top">
+              <div class="ic"><i class="fa-solid fa-envelope"></i></div>
+              <div class="meta">
+                <div class="name">Email</div>
+                <div class="sub">Gửi yêu cầu / báo lỗi / hợp tác</div>
+              </div>
+              <div class="badge">24/7</div>
+            </div>
+
+            <div class="kv">
+              <div class="k">Email</div>
+              <div class="v" id="emailText">—</div>
+            </div>
+            <div class="kv">
+              <div class="k">Ghi chú</div>
+              <div class="v">Liên Hệ Qua Email Enytoip</div>
+            </div>
+
+            <div class="actions">
+              <a class="btn btn--mini gold-glow magnetic" id="emailOpen" href="#">
+                <i class="fa-solid fa-paper-plane"></i> Soạn mail
+              </a>
+              <button class="btn btn--mini btn--ghost gold-glow copy-btn magnetic" type="button" data-copy="">
+                <i class="fa-solid fa-copy"></i> Sao chép email
+              </button>
+            </div>
+          </article>
+
+          <!-- Hotline -->
+          <article class="contact-item gold-glow reveal tilt" data-tilt="1.2" id="boxHotline">
+            <div class="contact-top">
+              <div class="ic"><i class="fa-solid fa-phone"></i></div>
+              <div class="meta">
+                <div class="name">ZALO</div>
+                <div class="sub">Hỗ trợ nhanh / hướng dẫn trực tiếp</div>
+              </div>
+              <div class="badge">Fast</div>
+            </div>
+
+            <div class="kv">
+              <div class="k">SĐT</div>
+              <div class="v" id="phoneText">—</div>
+            </div>
+            <div class="kv">
+              <div class="k">Ghi chú</div>
+              <div class="v">Nhấn “Gọi ngay” hoặc sao chép.</div>
+            </div>
+
+            <div class="actions">
+              <a class="btn btn--mini gold-glow magnetic" id="phoneOpen" href="#">
+                <i class="fa-solid fa-phone-volume"></i> Gọi ngay
+              </a>
+              <button class="btn btn--mini btn--ghost gold-glow copy-btn magnetic" type="button" data-copy="">
+                <i class="fa-solid fa-copy"></i> Sao chép SĐT
+              </button>
+            </div>
+          </article>
+
+          <!-- Guide -->
+          <article class="contact-item gold-glow reveal tilt" data-tilt="1.2" id="boxGuide">
+            <div class="contact-top">
+              <div class="ic"><i class="fa-solid fa-circle-info"></i></div>
+              <div class="meta">
+                <div class="name">Hướng dẫn</div>
+                <div class="sub">Các mục hỗ trợ phổ biến</div>
+              </div>
+              <div class="badge">Tips</div>
+            </div>
+
+            <div class="kv">
+              <div class="k">Nội dung</div>
+              <div class="v" id="guideText">
+                Mua key • Reset thiết bị • Gia hạn key • Lỗi đăng nhập • Lỗi thanh toán • Báo lỗi nhanh
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="btn btn--mini btn--ghost gold-glow copy-btn magnetic" type="button"
+                data-copy="Mua key | Reset thiết bị | Gia hạn key | Hỗ trợ lỗi đăng nhập | Lỗi thanh toán | Báo lỗi nhanh">
+                <i class="fa-solid fa-copy"></i> Sao chép hướng dẫn
+              </button>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- SOCIAL -->
+      <section class="card frame gold-glow reveal tilt" data-tilt="1.05" id="socialSection">
+        <h4 class="gold-glow"><i class="fa-solid fa-icons"></i> Kênh mạng xã hội</h4>
+        <p class="gold-glow"> Liên Hệ Ở Dưới Đây <b>Facebook</b>, <b>TikTok</b>, <b>Telegram</b>, <b>YouTube</b>.
+         
+        </p>
+
+        <div class="social-grid">
+          <a class="social-box gold-glow reveal tilt" data-tilt="1.25" id="socialFacebook" href="https://www.facebook.com/share/18EBXFPMDe/?mibextid=wwXIfr" target="_blank" rel="noopener">
+            <div class="social-ic"><i class="fa-brands fa-facebook-f"></i></div>
+            <div class="social-text">
+              <div class="top">Facebook</div>
+              <div class="bot" id="socialLabelFb">HH SUPER Official</div>
+            </div>
+            <div class="social-cta">Mở</div>
+          </a>
+
+          <a class="social-box gold-glow reveal tilt" data-tilt="1.25" id="socialTikTok" href="https://www.tiktok.com/@havanhuan_codervndev?_r=1&_t=ZS-94NVL5oiEnS" target="_blank" rel="noopener">
+            <div class="social-ic"><i class="fa-brands fa-tiktok"></i></div>
+            <div class="social-text">
+              <div class="top">TikTok</div>
+              <div class="bot" id="socialLabelTk">HH SUPER Official</div>
+            </div>
+            <div class="social-cta">Mở</div>
+          </a>
+
+          <a class="social-box gold-glow reveal tilt" data-tilt="1.25" id="socialTelegram" href="https://t.me/huanhavn" target="_blank" rel="noopener">
+            <div class="social-ic"><i class="fa-brands fa-telegram"></i></div>
+            <div class="social-text">
+              <div class="top">Telegram</div>
+              <div class="bot" id="socialLabelTg">HH SUPER Official</div>
+            </div>
+            <div class="social-cta">Mở</div>
+          </a>
+
+          <a class="social-box gold-glow reveal tilt" data-tilt="1.25" id="socialYouTube" href="https://www.youtube.com/@havanhuanvn" target="_blank" rel="noopener">
+            <div class="social-ic"><i class="fa-brands fa-youtube"></i></div>
+            <div class="social-text">
+              <div class="top">YouTube</div>
+              <div class="bot" id="socialLabelYt">HH SUPER Official</div>
+            </div>
+            <div class="social-cta">Mở</div>
+          </a>
+        </div>
+      </section>
+
+      <div class="footer frame gold-glow reveal tilt" data-tilt="0.9">
+        © <span id="year"></span> HH SUPER PRIME FREE FIRE 
+      </div>
+    </main>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast gold-glow" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    /* =========================================================
+       HH SUPER • CONTACT (NO ADMIN)
+       - KHÔNG CÓ ADMIN / KHÔNG LOCALSTORAGE
+       - CHỈ SỬA LINK TẠI OBJECT CONTACT BÊN DƯỚI
+       - Copy to clipboard + toast
+       - Ripple click, reveal on scroll, tilt card, magnetic button,
+         parallax nhẹ background + particles
+    ========================================================= */
+
+    /* =========================
+       ✅ CHỈNH THÔNG TIN Ở ĐÂY
+    ========================= */
+    const CONTACT = {
+      facebookName: "HVH Dev",
+      facebookLink: "https://www.facebook.com/share/18EBXFPMDe/?mibextid=wwXIfr",
+      email: "lehahuan1@gmail.com",
+      hotline: "0379435045",
+      tiktokLink: "https://www.tiktok.com/@havanhuan_codervndev?_r=1&_t=ZS-94NVL5oiEnS",
+      telegramLink: "https://t.me/huanhavn",
+      youtubeLink: "https://www.youtube.com/@havanhuanvn",
+      socialLabel: "HH SUPER Official"
+    };
+
+    const $ = (s) => document.querySelector(s);
+
+    const toastEl = $("#toast");
+    let toastTimer = null;
+
+    function toast(msg){
+      if (!toastEl) return;
+      toastEl.textContent = msg;
+      toastEl.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1800);
+    }
+
+    function normalizeTel(phone){
+      return (phone || "").replace(/[^\d+]/g, "");
+    }
+
+    function safeText(v, fallback="—"){
+      const t = (v || "").trim();
+      return t ? t : fallback;
+    }
+
+    function applyContact(){
+      // CONTACT boxes
+      $("#fbName").textContent = safeText(CONTACT.facebookName);
+      $("#fbLink").textContent = safeText(CONTACT.facebookLink);
+      $("#fbLink").href = CONTACT.facebookLink || "#";
+      $("#fbOpen").href = CONTACT.facebookLink || "#";
+
+      $("#emailText").textContent = safeText(CONTACT.email);
+      $("#emailOpen").href = "mailto:" + (CONTACT.email || "");
+
+      $("#phoneText").textContent = safeText(CONTACT.hotline);
+      $("#phoneOpen").href = "tel:" + normalizeTel(CONTACT.hotline);
+
+      // Copy buttons (set đúng nút theo box)
+      document.querySelectorAll(".copy-btn").forEach(btn => {
+        if (btn.closest("#boxFacebook")) btn.setAttribute("data-copy", CONTACT.facebookLink || "");
+        if (btn.closest("#boxEmail")) btn.setAttribute("data-copy", CONTACT.email || "");
+        if (btn.closest("#boxHotline")) btn.setAttribute("data-copy", CONTACT.hotline || "");
+        // guide giữ nguyên data-copy ở HTML
+      });
+
+      // SOCIAL boxes
+      const label = safeText(CONTACT.socialLabel, "HH SUPER Official");
+      $("#socialFacebook").href = CONTACT.facebookLink || "#";
+      $("#socialTikTok").href = CONTACT.tiktokLink || "#";
+      $("#socialTelegram").href = CONTACT.telegramLink || "#";
+      $("#socialYouTube").href = CONTACT.youtubeLink || "#";
+
+      $("#socialLabelFb").textContent = label;
+      $("#socialLabelTk").textContent = label;
+      $("#socialLabelTg").textContent = label;
+      $("#socialLabelYt").textContent = label;
+    }
+
+    async function copyText(text){
+      const t = (text || "").trim();
+      if (!t){
+        toast("Không có nội dung để sao chép!");
+        return;
+      }
+      try{
+        await navigator.clipboard.writeText(t);
+        toast("Đã sao chép: " + t);
+      }catch(err){
+        const ta = document.createElement("textarea");
+        ta.value = t;
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        ta.style.top = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        try{
+          document.execCommand("copy");
+          toast("Đã sao chép: " + t);
+        }catch(e){
+          toast("Trình duyệt không hỗ trợ sao chép tự động!");
+        }
+        document.body.removeChild(ta);
+      }
+    }
+
+    /* Ripple click for buttons/links */
+    function addRipple(el, clientX, clientY){
+      if (!el) return;
+      const r = document.createElement("span");
+      r.className = "ripple";
+      const rect = el.getBoundingClientRect();
+      const x = clientX - rect.left;
+      const y = clientY - rect.top;
+      r.style.left = x + "px";
+      r.style.top = y + "px";
+      el.appendChild(r);
+      r.addEventListener("animationend", () => r.remove());
+    }
+
+    /* Reveal on scroll */
+    function setupReveal(){
+      const els = document.querySelectorAll(".reveal");
+      const io = new IntersectionObserver((entries) => {
+        entries.forEach(ent => {
+          if (ent.isIntersecting) ent.target.classList.add("in");
+        });
+      }, { threshold: 0.12 });
+      els.forEach(el => io.observe(el));
+    }
+
+    /* Tilt (mượt) */
+    function setupTilt(){
+      const tiltEls = document.querySelectorAll(".tilt");
+      tiltEls.forEach(el => {
+        const strength = Number(el.getAttribute("data-tilt") || "1") * 7; // độ nghiêng
+        let raf = 0;
+
+        const onMove = (e) => {
+          cancelAnimationFrame(raf);
+          raf = requestAnimationFrame(() => {
+            const rect = el.getBoundingClientRect();
+            const px = (e.clientX - rect.left) / rect.width;  // 0..1
+            const py = (e.clientY - rect.top) / rect.height;  // 0..1
+            const rx = (py - 0.5) * -strength;
+            const ry = (px - 0.5) * strength;
+            el.style.transform = `translate3d(0,0,0) rotateX(${rx}deg) rotateY(${ry}deg)`;
+          });
+        };
+
+        const reset = () => {
+          el.style.transform = "translate3d(0,0,0) rotateX(0deg) rotateY(0deg)";
+        };
+
+        el.addEventListener("mousemove", onMove);
+        el.addEventListener("mouseleave", reset);
+      });
+    }
+
+    /* Magnetic buttons (nhẹ) */
+    function setupMagnetic(){
+      const items = document.querySelectorAll(".magnetic");
+      items.forEach(el => {
+        let raf = 0;
+        const power = 10; // độ hút
+        const onMove = (e) => {
+          cancelAnimationFrame(raf);
+          raf = requestAnimationFrame(() => {
+            const rect = el.getBoundingClientRect();
+            const x = e.clientX - (rect.left + rect.width / 2);
+            const y = e.clientY - (rect.top + rect.height / 2);
+            el.style.transform = `translate3d(${x / power}px, ${y / power}px, 0)`;
+          });
+        };
+        const reset = () => el.style.transform = "translate3d(0,0,0)";
+        el.addEventListener("mousemove", onMove);
+        el.addEventListener("mouseleave", reset);
+      });
+    }
+
+    /* Background parallax (nhẹ) */
+    function setupParallax(){
+      let raf = 0;
+      const max = 10; // px
+      window.addEventListener("mousemove", (e) => {
+        cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => {
+          const cx = window.innerWidth / 2;
+          const cy = window.innerHeight / 2;
+          const dx = (e.clientX - cx) / cx; // -1..1
+          const dy = (e.clientY - cy) / cy; // -1..1
+          document.body.style.setProperty("--bgx", (dx * max).toFixed(2) + "px");
+          document.body.style.setProperty("--bgy", (dy * max).toFixed(2) + "px");
+          document.body.style.setProperty("--bgscale", (1.08).toFixed(2));
+          // move bg (body::before) via CSS var by injecting transform using style tag trick:
+          // done below with a dynamic style element
+        });
+      });
+
+      // dynamic style for body::before transform using vars
+      const st = document.createElement("style");
+      st.id = "parallaxStyle";
+      st.textContent = `
+        body::before{
+          transform: translate3d(var(--bgx, 0px), var(--bgy, 0px), 0) scale(var(--bgscale, 1.08)) !important;
+        }
+      `;
+      document.head.appendChild(st);
+    }
+
+    /* Particles (sparks) */
+    function spawnSparks(){
+      const fx = document.querySelector(".fx");
+      if (!fx) return;
+
+      const count = 22;
+      for (let i = 0; i < count; i++){
+        const s = document.createElement("div");
+        s.className = "spark";
+
+        const x = Math.random() * 100;
+        const y = Math.random() * 100;
+
+        s.style.setProperty("--x", x + "vw");
+        s.style.setProperty("--y", y + "vh");
+        s.style.left = "0";
+        s.style.top = "0";
+
+        // lệch thời gian để không đồng loạt
+        const delay = (Math.random() * 6).toFixed(2);
+        s.style.animationDelay = delay + "s";
+        s.style.opacity = (0.20 + Math.random() * 0.22).toFixed(2);
+
+        fx.appendChild(s);
+      }
+    }
+
+    /* Init */
+    (function init(){
+      $("#year").textContent = new Date().getFullYear();
+
+      applyContact();
+      spawnSparks();
+      setupReveal();
+      setupTilt();
+      setupMagnetic();
+      setupParallax();
+
+      // Copy buttons + Ripple
+      document.addEventListener("click", (e) => {
+        const btn = e.target.closest(".copy-btn");
+        const clickable = e.target.closest(".btn, .social-box");
+        if (clickable){
+          addRipple(clickable, e.clientX, e.clientY);
+        }
+        if (!btn) return;
+        const val = btn.getAttribute("data-copy") || "";
+        copyText(val);
+      });
+
+      // thêm ripple cho link mở (fbLink)
+      $("#fbLink").addEventListener("click", (e) => addRipple($("#fbLink"), e.clientX, e.clientY));
+    })();
+  </script>
+</body>
+</html>

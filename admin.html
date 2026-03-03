@@ -1,0 +1,1187 @@
+<!-- admin.html (Improved - White UI + Hide login after success + SweetAlert notifications) -->
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HH SUPER - Admin Key Manager</title>
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    :root{
+      --primary:#4f46e5;
+      --primary2:#7c3aed;
+      --bg:#f6f7ff;
+      --card:#ffffff;
+      --card2:#fbfbff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --danger:#ef4444;
+      --ok:#10b981;
+      --warn:#f59e0b;
+      --border:rgba(2,6,23,0.10);
+      --shadow:0 10px 30px rgba(2,6,23,0.10);
+      --shadow2:0 8px 18px rgba(2,6,23,0.08);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    html, body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      background:
+        radial-gradient(900px 600px at 10% 10%, rgba(79,70,229,0.15), transparent 55%),
+        radial-gradient(900px 600px at 85% 35%, rgba(124,58,237,0.12), transparent 55%),
+        var(--bg);
+      color:var(--text);
+    }
+
+    .wrap{
+      max-width:1080px;
+      margin:0 auto;
+      padding:18px 14px 42px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:14px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:900;
+      letter-spacing:.3px;
+      font-size:16px;
+      user-select:none;
+    }
+    .brand i{color:var(--primary)}
+    .brand small{
+      font-weight:800;
+      color:var(--muted);
+      margin-left:6px;
+    }
+
+    .rightbar{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:9px 12px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.75);
+      box-shadow:var(--shadow2);
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .pill b{color:var(--text)}
+    .pill .dot{
+      width:8px;height:8px;border-radius:999px;background:var(--danger);display:inline-block;
+    }
+    .pill .dot.ok{background:var(--ok)}
+    .pill .sep{opacity:.5}
+
+    .mini-btn{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.75);
+      color:var(--text);
+      padding:9px 12px;
+      border-radius:999px;
+      cursor:pointer;
+      font-weight:800;
+      font-size:12px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      box-shadow:var(--shadow2);
+      transition:transform .12s, box-shadow .12s, background .12s;
+    }
+    .mini-btn:hover{transform:translateY(-1px); box-shadow:var(--shadow)}
+    .mini-btn:active{transform:translateY(0px)}
+    .mini-btn.danger{
+      border-color: rgba(239,68,68,0.30);
+      color:#991b1b;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 340px 1fr;
+      gap:12px;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.92), rgba(255,255,255,0.86));
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:var(--shadow);
+    }
+
+    .card h3{
+      margin:0 0 10px;
+      font-size:14px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+    .card h3 i{color:var(--primary)}
+    .sub{
+      margin:0 0 10px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+    }
+
+    label{
+      display:block;
+      font-size:11px;
+      color:var(--muted);
+      margin:9px 0 6px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+
+    input, select{
+      width:100%;
+      padding:10px 11px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.92);
+      color:var(--text);
+      outline:none;
+      font-size:13px;
+      transition:box-shadow .12s, border-color .12s;
+    }
+    input:focus, select:focus{
+      border-color:rgba(79,70,229,0.35);
+      box-shadow:0 0 0 3px rgba(79,70,229,0.12);
+    }
+
+    .row{display:flex; gap:10px}
+    .col{flex:1}
+    .two{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 640px){
+      .two{grid-template-columns:1fr}
+    }
+
+    .btn{
+      width:100%;
+      margin-top:10px;
+      padding:10px 12px;
+      border:none;
+      border-radius:12px;
+      background:linear-gradient(135deg, var(--primary), var(--primary2));
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+      transition:transform .12s, opacity .12s, box-shadow .12s;
+      box-shadow:0 10px 18px rgba(79,70,229,0.22);
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      font-size:13px;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn:active{transform:translateY(0px)}
+    .btn[disabled]{opacity:.65; cursor:not-allowed; transform:none}
+
+    .btn.secondary{
+      background:rgba(255,255,255,0.88);
+      box-shadow:none;
+      border:1px solid var(--border);
+      color:var(--text);
+      font-weight:900;
+    }
+    .btn.ok{
+      background:linear-gradient(135deg, #10b981, #34d399);
+      box-shadow:0 10px 18px rgba(16,185,129,0.18);
+    }
+    .btn.danger{
+      background:linear-gradient(135deg, #ef4444, #fb7185);
+      box-shadow:0 10px 18px rgba(239,68,68,0.16);
+    }
+
+    .inline-actions{
+      display:flex;
+      gap:10px;
+      margin-top:10px;
+    }
+    .inline-actions .btn{margin-top:0}
+
+    .table-wrap{
+      overflow:auto;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.80);
+      box-shadow:var(--shadow2);
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width: 880px;
+    }
+    th, td{
+      padding:10px 10px;
+      border-bottom:1px solid rgba(2,6,23,0.06);
+      text-align:left;
+      font-size:12.5px;
+      vertical-align:top;
+      color:var(--text);
+    }
+    th{
+      position:sticky;
+      top:0;
+      background:rgba(255,255,255,0.96);
+      backdrop-filter: blur(10px);
+      color:#334155;
+      font-size:11px;
+      letter-spacing:0.35px;
+      text-transform:uppercase;
+      border-bottom:1px solid rgba(2,6,23,0.10);
+      z-index:2;
+    }
+
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size:12px;
+      padding:6px 8px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:rgba(248,250,252,0.95);
+      display:inline-block;
+      color:#0f172a;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:12px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.70);
+      color:var(--muted);
+      white-space:nowrap;
+      font-weight:900;
+    }
+    .badge.ok{color:#065f46; border-color: rgba(16,185,129,0.30); background:rgba(16,185,129,0.10)}
+    .badge.bad{color:#991b1b; border-color: rgba(239,68,68,0.30); background:rgba(239,68,68,0.10)}
+    .badge.warn{color:#92400e; border-color: rgba(245,158,11,0.30); background:rgba(245,158,11,0.10)}
+
+    .small{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    .action-btn{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.90);
+      color:var(--text);
+      padding:8px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      font-size:12px;
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      transition:transform .12s, background .12s, box-shadow .12s;
+      font-weight:900;
+      box-shadow:0 8px 14px rgba(2,6,23,0.06);
+    }
+    .action-btn:hover{transform:translateY(-1px); background:rgba(255,255,255,1); box-shadow:0 12px 18px rgba(2,6,23,0.10)}
+    .action-btn:active{transform:translateY(0px)}
+    .action-btn.danger{border-color:rgba(239,68,68,0.30); color:#991b1b}
+    .action-btn.ok{border-color:rgba(16,185,129,0.30); color:#065f46}
+
+    .searchbar{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      margin-bottom:10px;
+    }
+    .searchbar input{flex:1}
+
+    .footer-note{
+      margin-top:12px;
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.5;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px dashed rgba(2,6,23,0.12);
+      background:rgba(255,255,255,0.70);
+    }
+
+    /* Modal */
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background:rgba(2,6,23,0.45);
+      padding:14px;
+      z-index:9999;
+    }
+    .modal.show{display:flex}
+    .modal-card{
+      width:min(720px, 100%);
+      background:rgba(255,255,255,0.98);
+      border:1px solid var(--border);
+      border-radius:18px;
+      box-shadow:0 20px 60px rgba(2,6,23,0.30);
+      overflow:hidden;
+    }
+    .modal-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:12px 14px;
+      border-bottom:1px solid rgba(2,6,23,0.08);
+      background:linear-gradient(135deg, rgba(79,70,229,0.08), rgba(124,58,237,0.06));
+    }
+    .modal-head strong{
+      display:flex; align-items:center; gap:10px;
+      font-size:13px;
+    }
+    .modal-body{padding:14px}
+    .modal-close{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,0.95);
+      color:var(--text);
+      width:38px;
+      height:38px;
+      border-radius:12px;
+      cursor:pointer;
+      box-shadow:0 8px 14px rgba(2,6,23,0.06);
+    }
+    .modal-close:hover{background:rgba(255,255,255,1)}
+    .divider{
+      border:none;
+      height:1px;
+      background:rgba(2,6,23,0.08);
+      margin:12px 0;
+    }
+
+    /* Sections */
+    #managerSection{display:none}
+    .ghost{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:14px;
+      border:1px solid rgba(2,6,23,0.08);
+      background:rgba(255,255,255,0.72);
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.45;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <i class="fa-solid fa-shield-halved"></i> HH SUPER <small>Admin</small>
+      </div>
+
+      <div class="rightbar">
+        <div class="pill" title="Trạng thái đăng nhập">
+          <span class="dot" id="dot"></span>
+          <span><i class="fa-solid fa-database"></i> Firebase Realtime</span>
+          <span class="sep">|</span>
+          <span id="who"><b>Chưa đăng nhập</b></span>
+        </div>
+
+        <button class="mini-btn" id="uidHintBtn" onclick="copyUIDHint()">
+          <i class="fa-solid fa-circle-info"></i> UID & Rules
+        </button>
+
+        <button class="mini-btn danger" id="logoutTopBtn" onclick="adminLogout()" style="display:none">
+          <i class="fa-solid fa-arrow-right-from-bracket"></i> Đăng xuất
+        </button>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- LEFT: LOGIN -->
+      <div class="card" id="loginSection">
+        <h3><i class="fa-solid fa-right-to-bracket"></i> Đăng nhập Admin</h3>
+        <p class="sub">
+          Admin dùng <b>Email/Password</b> (Firebase Auth). Sau khi đăng nhập, form đăng nhập sẽ ẩn và bạn sẽ thấy khu vực quản lý key.
+        </p>
+
+        <label>Email</label>
+        <input id="email" type="email" placeholder="admin@gmail.com" autocomplete="username" />
+
+        <label>Password</label>
+        <input id="pass" type="password" placeholder="••••••••" autocomplete="current-password" />
+
+        <button class="btn" id="loginBtn" onclick="adminLogin()">
+          <i class="fa-solid fa-lock"></i> Đăng nhập
+        </button>
+
+        <div class="ghost">
+          <b>Mẹo:</b> Hãy thêm UID admin vào <span class="kbd">/admins/&lt;UID&gt; = true</span> và áp Rules để bảo mật.
+        </div>
+      </div>
+
+      <!-- LEFT: MANAGER (CREATE) -->
+      <div class="card" id="managerSection">
+        <h3><i class="fa-solid fa-key"></i> Tạo / Quản lý Key</h3>
+        <p class="sub">
+          Nếu ô Key trống → hệ thống tự tạo key ngẫu nhiên. Hạn sử dụng theo <b>ngày</b>, lưu dạng timestamp.
+        </p>
+
+        <label>Key (tuỳ chọn)</label>
+        <input id="newKey" placeholder="Ví dụ: havanhuan / hh-2026-01..." />
+
+        <div class="two">
+          <div>
+            <label>Ngày hết hạn</label>
+            <input id="newExp" type="date" />
+          </div>
+          <div>
+            <label>Thiết bị tối đa</label>
+            <input id="newMax" type="number" min="1" value="1" />
+          </div>
+        </div>
+
+        <label>Ghi chú</label>
+        <input id="newNote" placeholder="Ví dụ: Key VIP / test / khách A..." />
+
+        <div class="two" style="margin-top:10px">
+          <button class="btn ok" onclick="createKey()"><i class="fa-solid fa-plus"></i> Tạo key</button>
+          <button class="btn secondary" onclick="genKeyFill()"><i class="fa-solid fa-wand-magic-sparkles"></i> Random</button>
+        </div>
+
+        <div class="footer-note">
+          <b>Lưu ý bảo mật:</b> Bạn nên cấu hình Rules để chỉ Admin xem danh sách key, và app chỉ đọc theo <span class="kbd">/keys/&lt;key&gt;</span>.
+        </div>
+      </div>
+
+      <!-- RIGHT: LIST -->
+      <div class="card" id="listCard">
+        <h3><i class="fa-solid fa-list"></i> Danh sách Key</h3>
+
+        <div class="searchbar">
+          <input id="search" placeholder="Tìm key..." oninput="renderKeys()" />
+          <button class="btn secondary" style="width:auto; margin-top:0" onclick="refreshKeys()">
+            <i class="fa-solid fa-rotate"></i>
+          </button>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>KEY</th>
+                <th>TRẠNG THÁI</th>
+                <th>HẾT HẠN</th>
+                <th>THIẾT BỊ</th>
+                <th>TẠO / CẬP NHẬT</th>
+                <th>THAO TÁC</th>
+              </tr>
+            </thead>
+            <tbody id="tbody">
+              <tr><td colspan="6" class="small">Chưa có dữ liệu. Hãy đăng nhập admin để tải danh sách key.</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="small" style="margin-top:10px">
+          <i class="fa-solid fa-circle-info" style="color:var(--primary)"></i>
+          Tip: Click <b>Sửa</b> để gia hạn, reset thiết bị, khoá/mở khoá hoặc xoá key.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EDIT -->
+  <div class="modal" id="modal">
+    <div class="modal-card">
+      <div class="modal-head">
+        <strong><i class="fa-solid fa-pen-to-square" style="color:var(--primary)"></i> Chỉnh sửa Key: <span class="kbd" id="mKey"></span></strong>
+        <button class="modal-close" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <div class="modal-body">
+        <div class="two">
+          <div>
+            <label>Ngày hết hạn</label>
+            <input id="mExp" type="date" />
+          </div>
+          <div>
+            <label>Thiết bị tối đa</label>
+            <input id="mMax" type="number" min="1" />
+          </div>
+        </div>
+
+        <label>Trạng thái</label>
+        <select id="mActive">
+          <option value="true">Đang hoạt động</option>
+          <option value="false">Khoá</option>
+        </select>
+
+        <label>Ghi chú</label>
+        <input id="mNote" />
+
+        <div class="two" style="margin-top:10px">
+          <button class="btn ok" onclick="saveModal()"><i class="fa-solid fa-floppy-disk"></i> Lưu</button>
+          <button class="btn secondary" onclick="renewDays()"><i class="fa-solid fa-calendar-plus"></i> Gia hạn + ngày</button>
+        </div>
+
+        <div class="two" style="margin-top:10px">
+          <button class="btn secondary" onclick="resetDevicesFromModal()"><i class="fa-solid fa-eraser"></i> Reset thiết bị</button>
+          <button class="btn danger" onclick="deleteKeyFromModal()"><i class="fa-solid fa-trash"></i> Xoá key</button>
+        </div>
+
+        <hr class="divider">
+
+        <h3 style="margin:0 0 10px"><i class="fa-solid fa-mobile-screen" style="color:var(--primary)"></i> Thiết bị đã dùng</h3>
+
+        <div class="table-wrap" style="border-radius:12px">
+          <table style="min-width:0">
+            <thead>
+              <tr>
+                <th>DEVICE ID</th>
+                <th>FIRST SEEN</th>
+                <th>LAST SEEN</th>
+                <th>INFO</th>
+              </tr>
+            </thead>
+            <tbody id="mDevices">
+              <tr><td colspan="4" class="small">Chưa có thiết bị.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+  <script>
+    // ====== FIREBASE CONFIG (THAY BẰNG CONFIG CỦA BẠN) ======
+    const firebaseConfig = {
+      apiKey: "AIzaSyBbAx15pD9xXtw6H9ijMm0-hbY3Opq7mDY",
+      authDomain: "app---ob520.firebaseapp.com",
+      databaseURL: "https://app---ob520-default-rtdb.firebaseio.com/",
+      projectId: "app---ob520",
+      storageBucket: "app---ob520.firebasestorage.app",
+      messagingSenderId: "1050579000808",
+      appId: "1:1050579000808:web:d10fc84cf7c80fdbc0985d"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    const db = firebase.database();
+    const auth = firebase.auth();
+
+    let KEYS_CACHE = {};
+    let MODAL_KEY = null;
+
+    function $(id){ return document.getElementById(id); }
+    function now(){ return Date.now(); }
+
+    // ===== SweetAlert helpers =====
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 2200,
+      timerProgressBar: true
+    });
+
+    function toastSuccess(msg){ Toast.fire({icon:'success', title: msg || 'Thành công'}); }
+    function toastError(msg){ Toast.fire({icon:'error', title: msg || 'Có lỗi'}); }
+    function toastInfo(msg){ Toast.fire({icon:'info', title: msg || 'Thông tin'}); }
+    function toastWarn(msg){ Toast.fire({icon:'warning', title: msg || 'Cảnh báo'}); }
+
+    async function swalConfirm(title, text, icon){
+      const res = await Swal.fire({
+        title: title || 'Xác nhận',
+        text: text || '',
+        icon: icon || 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Đồng ý',
+        cancelButtonText: 'Huỷ',
+        reverseButtons: true
+      });
+      return !!res.isConfirmed;
+    }
+
+    async function swalPromptNumber(title, inputValue){
+      const res = await Swal.fire({
+        title: title || 'Nhập số',
+        input: 'number',
+        inputValue: (inputValue !== undefined && inputValue !== null) ? String(inputValue) : '',
+        inputAttributes: { min: 1, step: 1 },
+        showCancelButton: true,
+        confirmButtonText: 'OK',
+        cancelButtonText: 'Huỷ',
+        reverseButtons: true,
+        inputValidator: (value)=>{
+          const n = Number(value);
+          if(!value) return 'Vui lòng nhập số.';
+          if(!Number.isFinite(n) || n <= 0) return 'Số phải > 0.';
+          return null;
+        }
+      });
+      if(!res.isConfirmed) return null;
+      return Number(res.value);
+    }
+
+    async function swalShowRules(uid){
+      const rules = `
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+
+    "admins": {
+      "$uid": {
+        ".read": "auth != null && auth.uid === $uid",
+        ".write": "auth != null && auth.uid === $uid"
+      }
+    },
+
+    "keys": {
+      ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+      ".write": "auth != null && root.child('admins').child(auth.uid).val() === true",
+
+      "$key": {
+        ".read": "auth != null && (root.child('admins').child(auth.uid).val() === true || auth.token != null)",
+        "devices": {
+          ".read": "auth != null && root.child('admins').child(auth.uid).val() === true",
+          ".write": "auth != null"
+        }
+      }
+    }
+  }
+}
+      `.trim();
+
+      const msg = [
+        "HƯỚNG DẪN UID ADMIN",
+        "",
+        "1) Đăng nhập admin (Email/Password).",
+        "2) Copy UID đang đăng nhập.",
+        "3) Trong Realtime Database tạo: /admins/<UID> = true",
+        "4) Áp Rules mẫu (tham khảo bên dưới).",
+        "",
+        "UID hiện tại:",
+        (uid ? uid : "(Chưa đăng nhập)")
+      ].join("\n");
+
+      await Swal.fire({
+        title: 'UID & Rules mẫu',
+        icon: 'info',
+        html:
+          `<div style="text-align:left;font-size:13px;line-height:1.45;color:#0f172a">
+            <pre style="white-space:pre-wrap;background:#f8fafc;border:1px solid rgba(2,6,23,0.12);padding:10px;border-radius:12px;margin:0 0 10px">${escapeHtml(msg)}</pre>
+            <div style="font-weight:800;margin:6px 0 8px">Rules mẫu (Realtime Database):</div>
+            <pre style="white-space:pre;overflow:auto;background:#0b1220;color:#e5e7eb;border:1px solid rgba(2,6,23,0.12);padding:10px;border-radius:12px;margin:0">${escapeHtml(rules)}</pre>
+          </div>`,
+        showCancelButton: true,
+        confirmButtonText: 'Copy UID',
+        cancelButtonText: 'Đóng',
+        reverseButtons: true
+      }).then(async (r)=>{
+        if(r.isConfirmed){
+          try{
+            if(uid){
+              await navigator.clipboard.writeText(uid);
+              toastSuccess('Đã copy UID.');
+            }else{
+              toastWarn('Chưa đăng nhập.');
+            }
+          }catch(e){
+            toastError('Không copy được (trình duyệt chặn).');
+          }
+        }
+      });
+    }
+
+    function escapeHtml(str){
+      return String(str || '')
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;')
+        .replace(/'/g,'&#039;');
+    }
+
+    // ===== Utils =====
+    function toDateInput(ts){
+      if(!ts) return '';
+      const d = new Date(ts);
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,'0');
+      const day = String(d.getDate()).padStart(2,'0');
+      return `${y}-${m}-${day}`;
+    }
+
+    function dateInputToTs(dateStr){
+      if(!dateStr) return 0;
+      const parts = dateStr.split('-').map(Number);
+      if(parts.length!==3) return 0;
+      const y = parts[0], m = parts[1], d = parts[2];
+      return new Date(y, m-1, d, 23, 59, 59, 999).getTime();
+    }
+
+    function fmt(ts){
+      if(!ts) return 'Không';
+      try { return new Date(ts).toLocaleString('vi-VN'); } catch(e){ return String(ts); }
+    }
+
+    function genKey(len=16){
+      const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+      let out = "hh-";
+      for(let i=0;i<len;i++){
+        out += chars[Math.floor(Math.random()*chars.length)];
+      }
+      return out.toLowerCase();
+    }
+
+    function isLoggedIn(){
+      return !!auth.currentUser;
+    }
+
+    function setUIState(logged){
+      $('loginSection').style.display = logged ? 'none' : 'block';
+      $('managerSection').style.display = logged ? 'block' : 'none';
+      $('logoutTopBtn').style.display = logged ? 'inline-flex' : 'none';
+      $('dot').className = 'dot' + (logged ? ' ok' : '');
+      if(!logged){
+        $('tbody').innerHTML = '<tr><td colspan="6" class="small">Chưa có dữ liệu. Hãy đăng nhập admin để tải danh sách key.</td></tr>';
+      }
+    }
+
+    function updateWho(){
+      const who = $('who');
+      const u = auth.currentUser;
+      if(!u){
+        who.innerHTML = '<b>Chưa đăng nhập</b>';
+        setUIState(false);
+        return;
+      }
+      who.innerHTML = `<b>UID:</b> ${escapeHtml(u.uid)}`;
+      setUIState(true);
+    }
+
+    // ===== UI actions =====
+    async function copyUIDHint(){
+      const u = auth.currentUser;
+      await swalShowRules(u ? u.uid : null);
+    }
+
+    function genKeyFill(){
+      $('newKey').value = genKey(10);
+      toastInfo('Đã tạo key ngẫu nhiên.');
+    }
+
+    // ===== Auth =====
+    async function adminLogin(){
+      const email = (($('email').value || '').trim());
+      const pass = ($('pass').value || '');
+
+      if(!email || !pass){
+        toastWarn('Vui lòng nhập email và password.');
+        return;
+      }
+
+      $('loginBtn').disabled = true;
+      $('loginBtn').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang đăng nhập...';
+
+      try{
+        await auth.signInWithEmailAndPassword(email, pass);
+        toastSuccess('Đăng nhập thành công.');
+        await refreshKeys();
+      }catch(e){
+        toastError((e && e.message) ? e.message : 'Đăng nhập thất bại.');
+      }finally{
+        $('loginBtn').disabled = false;
+        $('loginBtn').innerHTML = '<i class="fa-solid fa-lock"></i> Đăng nhập';
+      }
+    }
+
+    async function adminLogout(){
+      try{ await auth.signOut(); }catch(e){}
+      KEYS_CACHE = {};
+      renderKeys();
+      toastInfo('Đã đăng xuất.');
+    }
+
+    auth.onAuthStateChanged((u)=>{
+      updateWho();
+      if(u){
+        refreshKeys();
+      }else{
+        KEYS_CACHE = {};
+        renderKeys();
+      }
+    });
+
+    // ===== Data ops =====
+    async function createKey(){
+      if(!isLoggedIn()){
+        toastError('Bạn phải đăng nhập admin trước.');
+        return;
+      }
+
+      let key = (($('newKey').value || '').trim().toLowerCase());
+      if(!key) key = genKey(10);
+
+      if(/[.#$\[\]\/]/.test(key)){
+        toastError('Key chứa ký tự cấm: . # $ [ ] /');
+        return;
+      }
+
+      const expStr = $('newExp').value;
+      const expiresAt = dateInputToTs(expStr);
+      const maxDevices = Math.max(1, Number(($('newMax').value || 1)));
+      const note = (($('newNote').value || '').trim());
+
+      const ref = db.ref('keys/' + key);
+
+      try{
+        const exists = await ref.once('value');
+        if(exists.exists()){
+          toastWarn('Key đã tồn tại. Hãy chọn key khác hoặc chỉnh sửa key này.');
+          return;
+        }
+
+        const payload = {
+          active: true,
+          expiresAt: expiresAt || 0,
+          maxDevices: maxDevices,
+          note: note,
+          createdAt: now(),
+          updatedAt: now()
+        };
+
+        await ref.set(payload);
+
+        // Copy key
+        try{
+          await navigator.clipboard.writeText(key);
+          toastSuccess('Tạo key thành công & đã copy: ' + key);
+        }catch(e){
+          toastSuccess('Tạo key thành công: ' + key);
+        }
+
+        $('newKey').value = '';
+        $('newNote').value = '';
+        await refreshKeys();
+      }catch(e){
+        toastError((e && e.message) ? e.message : 'Lỗi tạo key.');
+      }
+    }
+
+    async function refreshKeys(){
+      if(!isLoggedIn()){
+        toastWarn('Chưa đăng nhập admin.');
+        return;
+      }
+
+      try{
+        const snap = await db.ref('keys').once('value');
+        KEYS_CACHE = snap.val() || {};
+        toastSuccess('Tải xong: ' + Object.keys(KEYS_CACHE).length + ' key.');
+        renderKeys();
+      }catch(e){
+        toastError((e && e.message) ? e.message : 'Không tải được danh sách key (kiểm tra Rules).');
+      }
+    }
+
+    function statusBadge(item){
+      const n = now();
+      const active = item.active !== false;
+      const exp = Number(item.expiresAt || 0);
+
+      if(!active) return '<span class="badge bad"><i class="fa-solid fa-ban"></i> Khoá</span>';
+      if(exp && n > exp) return '<span class="badge bad"><i class="fa-solid fa-clock"></i> Hết hạn</span>';
+      if(exp && (exp - n) < (3*24*60*60*1000)) return '<span class="badge warn"><i class="fa-solid fa-triangle-exclamation"></i> Sắp hết</span>';
+      return '<span class="badge ok"><i class="fa-solid fa-check"></i> OK</span>';
+    }
+
+    function deviceCount(item){
+      const d = item.devices || {};
+      return Object.keys(d).length;
+    }
+
+    function renderKeys(){
+      const tbody = $('tbody');
+      const q = (($('search').value || '').trim().toLowerCase());
+      const keys = Object.keys(KEYS_CACHE || {});
+
+      if(!keys.length){
+        tbody.innerHTML = '<tr><td colspan="6" class="small">Chưa có dữ liệu.</td></tr>';
+        return;
+      }
+
+      // sort desc by createdAt
+      keys.sort((a,b)=>{
+        const A = KEYS_CACHE[a] || {};
+        const B = KEYS_CACHE[b] || {};
+        return Number(B.createdAt||0) - Number(A.createdAt||0);
+      });
+
+      const rows = [];
+      for(const k of keys){
+        if(q && !k.includes(q)) continue;
+
+        const item = KEYS_CACHE[k] || {};
+        const exp = Number(item.expiresAt || 0);
+        const max = Math.max(1, Number(item.maxDevices || 1));
+        const dc = deviceCount(item);
+
+        rows.push(`
+          <tr>
+            <td>
+              <div class="kbd">${escapeHtml(k)}</div>
+              <div class="small" style="margin-top:6px">${escapeHtml(item.note||'')}</div>
+            </td>
+            <td>${statusBadge(item)}</td>
+            <td>
+              <div>${exp ? fmt(exp) : 'Không'}</div>
+              <div class="small">Last login: ${item.lastLoginAt ? fmt(item.lastLoginAt) : 'Chưa có'}</div>
+            </td>
+            <td>
+              <div class="badge ${dc>=max ? 'bad' : 'ok'}"><i class="fa-solid fa-mobile-screen"></i> ${dc}/${max}</div>
+            </td>
+            <td>
+              <div class="small">Tạo: ${item.createdAt ? fmt(item.createdAt) : '—'}</div>
+              <div class="small">Cập nhật: ${item.updatedAt ? fmt(item.updatedAt) : '—'}</div>
+            </td>
+            <td>
+              <div class="actions">
+                <button class="action-btn" onclick="copyKey('${escapeHtml(k)}')"><i class="fa-solid fa-copy"></i> Copy</button>
+                <button class="action-btn ok" onclick="openModal('${escapeHtml(k)}')"><i class="fa-solid fa-pen"></i> Sửa</button>
+                <button class="action-btn" onclick="toggleActive('${escapeHtml(k)}')"><i class="fa-solid fa-power-off"></i> On/Off</button>
+                <button class="action-btn danger" onclick="deleteKeyQuick('${escapeHtml(k)}')"><i class="fa-solid fa-trash"></i> Xoá</button>
+              </div>
+            </td>
+          </tr>
+        `);
+      }
+
+      tbody.innerHTML = rows.length ? rows.join('') : '<tr><td colspan="6" class="small">Không tìm thấy key phù hợp.</td></tr>';
+    }
+
+    async function copyKey(k){
+      try{
+        await navigator.clipboard.writeText(k);
+        toastSuccess('Đã copy: ' + k);
+      }catch(e){
+        toastError('Không copy được (trình duyệt chặn).');
+      }
+    }
+
+    async function toggleActive(k){
+      if(!isLoggedIn()) return;
+
+      const item = KEYS_CACHE[k] || {};
+      const next = !(item.active !== false);
+
+      try{
+        await db.ref('keys/'+k).update({ active: next, updatedAt: now() });
+        toastSuccess('Đã cập nhật trạng thái: ' + k);
+        await refreshKeys();
+      }catch(e){
+        toastError((e && e.message) ? e.message : 'Lỗi cập nhật.');
+      }
+    }
+
+    async function deleteKeyQuick(k){
+      if(!isLoggedIn()) return;
+
+      const ok = await swalConfirm('Xoá key?', 'Xoá key "' + k + '" ? (Không thể hoàn tác)', 'warning');
+      if(!ok) return;
+
+      try{
+        await db.ref('keys/'+k).remove();
+        toastSuccess('Đã xoá: ' + k);
+        await refreshKeys();
+      }catch(e){
+        toastError((e && e.message) ? e.message : 'Lỗi xoá key.');
+      }
+    }
+
+    // ===== Modal =====
+    async function openModal(k){
+      MODAL_KEY = k;
+      $('mKey').textContent = k;
+
+      const item = KEYS_CACHE[k] || {};
+      $('mExp').value = toDateInput(item.expiresAt || 0);
+      $('mMax').value = Math.max(1, Number(item.maxDevices || 1));
+      $('mActive').value = (item.active !== false) ? 'true' : 'false';
+      $('mNote').value = item.note || '';
+
+      renderModalDevices(item.devices || {});
+      $('modal').classList.add('show');
+    }
+
+    function closeModal(){
+      $('modal').classList.remove('show');
+      MODAL_KEY = null;
+    }
+
+    function renderModalDevices(devices){
+      const tbody = $('mDevices');
+      const ids = Object.keys(devices || {});
+      if(!ids.length){
+        tbody.innerHTML = '<tr><td colspan="4" class="small">Chưa có thiết bị.</td></tr>';
+        return;
+      }
+      ids.sort((a,b)=>{
+        const A = devices[a] || {};
+        const B = devices[b] || {};
+        return Number(B.lastSeen||0) - Number(A.lastSeen||0);
+      });
+      tbody.innerHTML = ids.map(id=>{
+        const d = devices[id] || {};
+        const info = [
+          d.platform ? ('Platform: ' + escapeHtml(d.platform)) : '',
+          d.language ? ('Lang: ' + escapeHtml(d.language)) : '',
+          d.screen ? ('Screen: ' + escapeHtml(d.screen)) : '',
+          d.userAgent ? ('UA: ' + escapeHtml(d.userAgent)) : ''
+        ].filter(Boolean).join('<br/>');
+        return `
+          <tr>
+            <td><span class="kbd">${escapeHtml(id)}</span></td>
+            <td>${d.firstSeen ? fmt(d.firstSeen) : '—'}</td>
+            <td>${d.lastSeen ? fmt(d.lastSeen) : '—'}</td>
+            <td class="small">${info}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function saveModal(){
+      if(!isLoggedIn() || !MODAL_KEY) return;
+
+      const k = MODAL_KEY;
+      const expiresAt = dateInputToTs($('mExp').value);
+      const maxDevices = Math.max(1, Number($('mMax').value || 1));
+      const active = ($('mActive').value === 'true');
+      const note = ($('mNote').value || '').trim();
+
+      try{
+        await db.ref('keys/'+k).update({
+          expiresAt: expiresAt || 0,
+          maxDevices,
+          active,
+          note,
+          updatedAt: now()
+        });
+        toastSuccess('Đã lưu thay đổi.');
+        await refreshKeys();
+
+        // refresh modal devices from cache
+        const item = KEYS_CACHE[k] || {};
+        renderModalDevices(item.devices || {});
+      }catch(e){
+        toastError((e && e.message) ? e.message : 'Lỗi lưu.');
+      }
+    }
+
+    async function renewDays(){
+      if(!isLoggedIn() || !MODAL_KEY) return;
+
+      const days = await swalPromptNumber('Nhập số ngày muốn gia hạn (+)', 30);
+      if(!days) return;
+
+      const k = MODAL_KEY;
+      const item = KEYS_CACHE[k] || {};
+      const cur = Number(item.expiresAt || 0);
+      const base = cur && cur > now() ? cur : now();
+      const next = base + days*24*60*60*1000;
+
+      try{
+        await db.ref('keys/'+k).update({ expiresAt: next, updatedAt: now() });
+        $('mExp').value = toDateInput(next);
+        toastSuccess('Đã gia hạn +' + days + ' ngày.');
+        await refreshKeys();
+      }catch(e){
+        toastError((e && e.message) ? e.message : 'Lỗi gia hạn.');
+      }
+    }
+
+    async function resetDevicesFromModal(){
+      if(!isLoggedIn() || !MODAL_KEY) return;
+
+      const k = MODAL_KEY;
+      const ok = await swalConfirm('Reset thiết bị?', 'Reset toàn bộ thiết bị của key "' + k + '" ?', 'warning');
+      if(!ok) return;
+
+      try{
+        await db.ref('keys/'+k+'/devices').remove();
+        await db.ref('keys/'+k).update({ updatedAt: now() });
+        toastSuccess('Đã reset thiết bị.');
+        await refreshKeys();
+        const item = KEYS_CACHE[k] || {};
+        renderModalDevices(item.devices || {});
+      }catch(e){
+        toastError((e && e.message) ? e.message : 'Lỗi reset thiết bị.');
+      }
+    }
+
+    async function deleteKeyFromModal(){
+      if(!isLoggedIn() || !MODAL_KEY) return;
+
+      const k = MODAL_KEY;
+      const ok = await swalConfirm('Xoá key?', 'Xoá key "' + k + '" ? (Không thể hoàn tác)', 'warning');
+      if(!ok) return;
+
+      try{
+        await db.ref('keys/'+k).remove();
+        toastSuccess('Đã xoá key.');
+        closeModal();
+        await refreshKeys();
+      }catch(e){
+        toastError((e && e.message) ? e.message : 'Lỗi xoá key.');
+      }
+    }
+  </script>
+</body>
+</html>

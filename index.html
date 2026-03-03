@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>HH SUPER • Deluxe UI</title>
+<link href="assets/favicon.png" rel="icon"/>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600;1,700&amp;family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,500;1,600;1,700&amp;display=swap" rel="stylesheet"/>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link href="assets/style.css" rel="stylesheet"/>
+</head>
+<body data-accent="gold" data-particles="1" data-reduce-motion="0">
+<!-- FX Canvas -->
+<canvas id="fxCanvas"></canvas>
+<!-- HUD -->
+<div id="hud"></div>
+<!-- HEADER -->
+<div class="top-header">
+<div class="inner">
+<div class="header-left">
+<div class="png-logo" title="Crown PNG"></div>
+<div class="brand-text">
+<div class="brand-title">HH SUPER</div>
+<div class="brand-sub">
+<span class="spark"></span>
+<span id="authorText">Hà Văn Huấn</span>
+</div>
+</div>
+</div>
+<div class="header-right">
+<button class="hex-btn hamburger" onclick="openMenu()" title="Menu">
+<i class="fa-solid fa-bars"></i>
+</button>
+</div>
+</div>
+</div>
+<!-- MENU -->
+<div class="menu-overlay" id="menuOverlay" onclick="closeMenu()"></div>
+<aside class="drawer" id="drawer">
+<div class="drawer-head">
+<strong><i class="fa-solid fa-bars-staggered"></i> Menu</strong>
+<button class="drawer-close" onclick="closeMenu()"><i class="fa-solid fa-xmark"></i></button>
+</div>
+<div class="drawer-body">
+<div class="menu-card">
+<div style="font-weight:900; color:var(--text); margin-bottom:8px; display:flex; align-items:center; gap:8px;  letter-spacing:.2px;">
+<i class="fa-solid fa-key" style="color:var(--accent-2)"></i> Key hiện tại
+        </div>
+<div class="pill" style="max-width:100%; justify-content:flex-start;">
+<span class="dot"></span>
+<span><b id="menuKey">—</b></span>
+</div>
+<div style="height:10px"></div>
+<div style="font-weight:900; color:var(--text); margin-bottom:8px; display:flex; align-items:center; gap:8px;  letter-spacing:.2px;">
+<i class="fa-solid fa-fingerprint" style="color:var(--accent-2)"></i> Device ID
+        </div>
+<div class="pill" style="max-width:100%; justify-content:flex-start;">
+<span class="dot" style="background:var(--warn); box-shadow:0 0 0 3px rgba(245,158,11,0.14)"></span>
+<span><b id="menuDevice">—</b></span>
+</div>
+<div style="margin-top:10px; font-size:12px; color:rgba(234,240,255,0.72); line-height:1.55;">
+          Dùng menu để chuyển tab, làm mới key, copy key/device, quản lý thiết bị hoặc đăng xuất.
+        </div>
+</div>
+<div class="menu-card">
+<div style="font-weight:900; color:var(--text); margin-bottom:10px; display:flex; align-items:center; gap:8px;  letter-spacing:.2px;">
+<i class="fa-solid fa-layer-group" style="color:var(--accent-2)"></i> Điều hướng
+        </div>
+<div class="menu-row">
+<button class="menu-item" onclick="menuGo('page-home')">
+<div class="left"><i class="fa-solid fa-house"></i> Trang chủ</div>
+<small>Home</small>
+</button>
+<button class="menu-item" onclick="menuGo('page-checkkey')">
+<div class="left"><i class="fa-solid fa-shield-check"></i> Kiểm tra Key</div>
+<small>Check</small>
+</button>
+<button class="menu-item" onclick="menuGo('page-tools')">
+<div class="left"><i class="fa-solid fa-wand-magic-sparkles"></i> Tools</div>
+<small>Preset</small>
+</button>
+<button class="menu-item" onclick="menuGo('page-devices')">
+<div class="left"><i class="fa-solid fa-microchip"></i> Thiết bị</div>
+<small>Devices</small>
+</button>
+<button class="menu-item" onclick="menuGo('page-settings')">
+<div class="left"><i class="fa-solid fa-gear"></i> Cài đặt</div>
+<small>Settings</small>
+</button>
+<button class="menu-item" onclick="menuActionAbout()">
+<div class="left"><i class="fa-solid fa-circle-info"></i> Giới thiệu</div>
+<small>About</small>
+</button>
+</div>
+</div>
+<div class="menu-card">
+<div style="font-weight:900; color:var(--text); margin-bottom:10px; display:flex; align-items:center; gap:8px;  letter-spacing:.2px;">
+<i class="fa-solid fa-bolt" style="color:var(--accent-2)"></i> Chức năng nhanh
+        </div>
+<div class="menu-row">
+<button class="menu-item" onclick="menuActionRefresh()">
+<div class="left"><i class="fa-solid fa-rotate"></i> Làm mới key</div>
+<small>Refresh</small>
+</button>
+<button class="menu-item" onclick="menuActionCopyKey()">
+<div class="left"><i class="fa-solid fa-copy"></i> Copy key</div>
+<small>Clipboard</small>
+</button>
+<button class="menu-item" onclick="menuActionCopyDevice()">
+<div class="left"><i class="fa-solid fa-fingerprint"></i> Copy Device ID</div>
+<small>Clipboard</small>
+</button>
+<button class="menu-item" onclick="menuActionClearSaved()">
+<div class="left"><i class="fa-solid fa-eraser"></i> Xoá key đã lưu</div>
+<small>Local</small>
+</button>
+<button class="menu-item menu-danger" onclick="menuActionLogout()">
+<div class="left"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</div>
+<small>Logout</small>
+</button>
+</div>
+</div>
+</div>
+</aside>
+<!-- STARTUP OVERLAY -->
+<div id="startup-overlay">
+<div class="startup-card">
+<div class="startup-head">
+<div class="startup-logo" title="HH SUPER"></div>
+<div class="startup-title">
+<b> Check Thiết Bị • Server</b>
+<small>Tự động kiểm tra khi vào app</small>
+</div>
+</div>
+<div class="startup-body">
+<div class="startup-scan"></div>
+<div class="startup-steps">
+<div class="step" id="step-device">
+<div class="left">
+<div class="ic"><i class="fa-solid fa-fingerprint"></i></div>
+<div style="min-width:0">
+<b>Thiết bị</b>
+<small>Đang tạo Device ID...</small>
+</div>
+</div>
+<div class="tag"><i class="fa-solid fa-circle-notch fa-spin"></i> ...</div>
+</div>
+<div class="step" id="step-browser">
+<div class="left">
+<div class="ic"><i class="fa-solid fa-globe"></i></div>
+<div style="min-width:0">
+<b>Trình duyệt</b>
+<small>Đang kiểm tra...</small>
+</div>
+</div>
+<div class="tag"><i class="fa-solid fa-circle-notch fa-spin"></i> ...</div>
+</div>
+<div class="step" id="step-network">
+<div class="left">
+<div class="ic"><i class="fa-solid fa-wifi"></i></div>
+<div style="min-width:0">
+<b>Mạng</b>
+<small>Đang kiểm tra...</small>
+</div>
+</div>
+<div class="tag"><i class="fa-solid fa-circle-notch fa-spin"></i> ...</div>
+</div>
+<div class="step" id="step-firebase">
+<div class="left">
+<div class="ic"><i class="fa-solid fa-database"></i></div>
+<div style="min-width:0">
+<b>Firebase</b>
+<small>Đang bắt tay...</small>
+</div>
+</div>
+<div class="tag"><i class="fa-solid fa-circle-notch fa-spin"></i> ...</div>
+</div>
+<div class="step" id="step-server">
+<div class="left">
+<div class="ic"><i class="fa-solid fa-server"></i></div>
+<div style="min-width:0">
+<b>Server</b>
+<small>Đang kiểm tra...</small>
+</div>
+</div>
+<div class="tag"><i class="fa-solid fa-circle-notch fa-spin"></i> ...</div>
+</div>
+</div>
+</div>
+<div class="startup-foot">
+<div class="progress"><span id="startupProgress"></span></div>
+<div class="startup-status">
+<div class="msg" id="startupMsg">Đang kiểm tra…</div>
+<span class="badge"><i class="fa-solid fa-bolt" style="color:var(--accent-2)"></i> Huấn Hà</span>
+</div>
+<div class="startup-actions" id="startupActions" style="display:none">
+<button onclick="startupRetry()"><i class="fa-solid fa-rotate"></i> Thử lại</button>
+<button onclick="startupClose()"><i class="fa-solid fa-eye-slash"></i> Đóng</button>
+<button class="danger" onclick="startupLogout()"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</button>
+</div>
+</div>
+</div>
+</div>
+<!-- LOGIN -->
+<div id="login-screen">
+<div class="login-shell">
+<div class="glass-card">
+<!-- BRAND -->
+<div class="login-brand">
+<div class="logo"></div>
+<div class="txt">
+<div class="typing-glow" id="loginBrandTyping">HH SUPER</div>
+<div class="sub">Key Login Prime </div>
+</div>
+</div>
+<div class="login-title">
+<strong>Đăng nhập bằng Key</strong>
+<span>Nhập key để truy cập. Nếu đã đăng nhập trước đó, hệ thống sẽ tự động đăng nhập lại khi mở app.</span>
+</div>
+<!-- Key input + eye -->
+<div class="login-input">
+<div class="field-shell">
+<div class="field-row">
+<div class="field-ic" title="Key">
+<i class="fa-solid fa-lock"></i>
+</div>
+<input autocomplete="off" id="login-key" placeholder="Nhập key để đăng nhập" required="" type="password"/>
+<button class="eye-btn" onclick="toggleKeyVisibility()" title="Hiện/Ẩn key">
+<i class="fa-solid fa-eye" id="eyeIcon"></i>
+</button>
+</div>
+</div>
+<div class="login-icon-row">
+<button class="mini-hex" onclick="pasteFromClipboard()" title="Dán từ clipboard">
+<i class="fa-solid fa-paste"></i> Dán key
+            </button>
+<button class="mini-hex danger" onclick="clearSavedKey()" title="Xoá key đã lưu">
+<i class="fa-solid fa-eraser"></i> Xoá key
+            </button>
+</div>
+</div>
+<div class="login-actions">
+<button class="btn-ghost" id="login-btn" onclick="checkKey()">
+<span class="shine"></span>
+<span>Login</span> <i class="fa-solid fa-arrow-right"></i>
+</button>
+</div>
+<div id="error-msg">
+<i class="fa-solid fa-circle-exclamation"></i>
+<label id="error-text">Key không hợp lệ, vui lòng thử lại!</label>
+</div>
+</div>
+<!-- Info tabs -->
+<div class="login-info">
+<div class="tabs">
+<button class="tab-btn active" id="tabInfoBtn" onclick="switchLoginTab('info')">Thông tin</button>
+<button class="tab-btn" id="tabWarnBtn" onclick="switchLoginTab('warn')">Cảnh báo</button>
+<button class="tab-btn" id="tabContactBtn" onclick="switchLoginTab('contact')">Liên hệ</button>
+</div>
+<div class="tab-panel active" id="tab-info">
+<div class="info-box info-green">
+<h5><i class="fa-solid fa-circle-check"></i> Auto login</h5>
+<p>Nếu có key đã lưu, hệ thống sẽ tự đăng nhập khi mở app.</p>
+</div>
+<div class="info-box info-gold">
+<h5><i class="fa-solid fa-shield-halved"></i> Giới hạn thiết bị</h5>
+<p>Key giới hạn số thiết bị bằng transaction. Nếu vượt giới hạn, key sẽ báo đạt maxDevices.</p>
+</div>
+<div class="info-box info-gold">
+<h5><i class="fa-solid fa-screwdriver-wrench"></i> Tips</h5>
+<p>Vào <b style="color:var(--accent-2)">Cài đặt</b> để bật/tắt click sound, particles, hoặc đổi accent (Gold/Aqua).</p>
+</div>
+</div>
+<div class="tab-panel" id="tab-warn">
+<div class="info-box info-red">
+<h5><i class="fa-solid fa-triangle-exclamation"></i> Cảnh báo</h5>
+<p>Không chia sẻ key cho người khác. Nếu lộ key có thể bị dùng hết thiết bị hoặc bị khoá.</p>
+</div>
+<div class="info-box info-gold">
+<h5><i class="fa-solid fa-clock"></i> Hết hạn</h5>
+<p>Nếu key hết hạn, hệ thống sẽ chặn đăng nhập và hiển thị ngày hết hạn.</p>
+</div>
+</div>
+<div class="tab-panel" id="tab-contact">
+<div class="info-box info-gold">
+<h5><i class="fa-solid fa-headset"></i> Liên hệ</h5>
+<p>Bấm vào nút dưới để chuyển sang trang liên hệ riêng: <b style="color:var(--accent-2)">Mở trang ở đây</b></p>
+<div class="contact-actions">
+<button onclick="goContactPage()"><i class="fa-solid fa-arrow-right"></i> Mở trang liên hệ</button>
+<a href="https://www.facebook.com/share/1E3tPVcWYa/?mibextid=wwXIfr" rel="noopener" target="_blank">
+<i class="fa-brands fa-facebook-f"></i> Facebook
+              </a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- MAIN APP -->
+<div class="page-wrap" id="main-app">
+<div class="content">
+<!-- HOME -->
+<section class="page active" id="page-home">
+<div class="section-title">Trang chủ App Super Huấn Hà VN</div>
+<p class="section-sub">
+          Hỗ Trợ kéo tâm trên tất cả mọi thiết bị , và hoạt động Cả Free Fire & Free Fire Max         </p>
+<div aria-label="Ảnh nổi bật" class="carousel" id="homeCarousel">
+<div class="carousel-track">
+<div class="carousel-slide" data-idx="0">
+<img alt="Ảnh 1" decoding="async" loading="lazy" src="https://st.quantrimang.com/photos/image/2022/08/09/Mod-head-shot-FF-5.jpg"/>
+</div>
+<div class="carousel-slide" data-idx="1">
+<img alt="Ảnh 2" decoding="async" loading="lazy" src="https://static.lag.vn/upload/news/20/12/25/0_MPGB.jpg?w=800&amp;encoder=wic&amp;subsampling=444"/>
+</div>
+<div class="carousel-slide" data-idx="2">
+<img alt="Ảnh 3" decoding="async" loading="lazy" src="https://i.ytimg.com/vi/H6-UXA5Y4yM/maxresdefault.jpg"/>
+</div>
+<div class="carousel-slide" data-idx="3">
+<img alt="Ảnh 4" decoding="async" loading="lazy" src="https://i.ytimg.com/vi/fgaZPMF6Dmc/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&amp;rs=AOn4CLC64GM5kLHAr7Hbfyjm90pveh4mSg"/>
+</div>
+</div>
+<button aria-label="Ảnh trước" class="carousel-nav prev" type="button">
+<i class="fa-solid fa-chevron-left"></i>
+</button>
+<button aria-label="Ảnh sau" class="carousel-nav next" type="button">
+<i class="fa-solid fa-chevron-right"></i>
+</button>
+<div aria-label="Điều hướng ảnh" class="carousel-dots">
+<button aria-label="Ảnh 1" class="carousel-dot" data-idx="0" type="button"></button><button aria-label="Ảnh 2" class="carousel-dot" data-idx="1" type="button"></button><button aria-label="Ảnh 3" class="carousel-dot" data-idx="2" type="button"></button><button aria-label="Ảnh 4" class="carousel-dot" data-idx="3" type="button"></button>
+</div>
+</div>
+<!-- Quick tiles (clickable) -->
+<div class="card">
+<div class="card-head">
+<h4><i class="fa-solid fa-bolt"></i> Tiện ích nhanh</h4>
+<span class="status-pill"><i class="fa-solid fa-microchip"></i> UI</span>
+</div>
+<p class="muted">Hỗ Trợ Boost Nhạy Máy Siêu Pro </p>
+<div class="quick-grid">
+<div class="quick-tile" data-on="1" id="qt-smooth" onclick="quickToggle('qt-smooth')">
+<div class="quick-left">
+<div class="quick-ic"><i class="fa-solid fa-gauge-high"></i></div>
+<div class="quick-txt">
+<b>Bug Gun Recoil</b>
+<small>Cải Thiện Tâm Súng Dễ Kéo Và Giản Lạc Đạn Khi Bắn </small>
+</div>
+</div>
+<span class="status-pill ok"><i class="fa-solid fa-check"></i> ON</span>
+</div>
+<div class="quick-tile" data-on="1" id="qt-stable" onclick="quickToggle('qt-stable')">
+<div class="quick-left">
+<div class="quick-ic"><i class="fa-solid fa-wifi"></i></div>
+<div class="quick-txt">
+<b>SPEED MAX</b>
+<small>Fix Toàn Bộ Lỗi Giật Lag Khi Chơi Game </small>
+</div>
+</div>
+<span class="status-pill ok"><i class="fa-solid fa-check"></i> ON</span>
+</div>
+<div class="quick-tile" data-on="1" id="qt-protect" onclick="quickToggle('qt-protect')">
+<div class="quick-left">
+<div class="quick-ic"><i class="fa-solid fa-shield"></i></div>
+<div class="quick-txt">
+<b>Antiband Safr Prime</b>
+<small>Bảo Vệ Tránh Bị Quét Và Band Id</small>
+</div>
+</div>
+<span class="status-pill ok"><i class="fa-solid fa-lock"></i> SAFE</span>
+</div>
+<div class="quick-tile" data-on="0" id="qt-boost" onclick="quickToggle('qt-boost')">
+<div class="quick-left">
+<div class="quick-ic"><i class="fa-solid fa-rocket"></i></div>
+<div class="quick-txt">
+<b>BOOST GAME PRIME</b>
+<small>Tối Ưu Mượt Mà Khi Chơi Gane </small>
+</div>
+</div>
+<span class="status-pill bad"><i class="fa-solid fa-xmark"></i> OFF</span>
+</div>
+</div>
+<div class="key-actions" style="margin-top:14px">
+  <button class="chip-btn" onclick="menuGo('page-tools')"><i class="fa-solid fa-wand-magic-sparkles"></i> Mở Tools</button>
+  <button class="chip-btn" onclick="menuGo('page-settings')"><i class="fa-solid fa-gear"></i> Cài đặt UI</button>
+</div>
+</div>
+<!-- Preset quick -->
+<div class="card">
+<div class="card-head">
+<h4><i class="fa-solid fa-sliders"></i> Preset nhanh</h4>
+<span class="status-pill warn"><i class="fa-solid fa-star"></i> HOT</span>
+</div>
+<p class="muted">Áp dụng preset sẽ thay đổi slider &amp; DPI + HUD.</p>
+<div class="grid-2">
+<button class="preset-btn" onclick="applyPreset('smooth')"><i class="fa-solid fa-feather-pointed"></i> Smooth</button>
+<button class="preset-btn" onclick="applyPreset('headshot')"><i class="fa-solid fa-crosshairs"></i> Headshot</button>
+<button class="preset-btn" onclick="applyPreset('balanced')"><i class="fa-solid fa-scale-balanced"></i> Balanced</button>
+<button class="preset-btn" onclick="applyPreset('sniper')"><i class="fa-solid fa-binoculars"></i> Sniper</button>
+</div>
+</div>
+<!-- DPI -->
+<div class="card">
+<div class="card-head">
+<h4><i class="fa-solid fa-mouse"></i> Tùy chỉnh DPI</h4>
+<span class="status-pill"><i class="fa-solid fa-circle-info"></i> UI</span>
+</div>
+<p class="muted">Nhập mức DPI để tối ưu hóa độ nhạy và độ mượt</p>
+<div class="dpi-input-group">
+<input class="input-control" id="dpi-input" placeholder="Ví dụ: 800, 1200..." type="number"/>
+<button class="dpi-btn" id="dpi-apply" onclick="applyDPI()"><i class="fa-solid fa-check-double"></i> Áp dụng</button>
+</div>
+</div>
+<!-- SENS sliders -->
+<div class="card">
+<div class="control-header">
+<h4 style="margin:0; font-size:15px; font-weight:900; display:flex; align-items:center; gap:10px; ">
+<i class="fa-solid fa-eye" style="color:var(--accent-2)"></i> Touch View
+            </h4>
+<span class="value-badge" id="sens-general-val">100%</span>
+</div>
+<p class="muted">Độ nhạy khi xoay góc nhìn.</p>
+<div class="slider-wrapper">
+<input class="custom-slider sensitivity-slider" id="sens-general" max="100" min="1" type="range" value="100"/>
+</div>
+</div>
+<div class="card">
+<div class="control-header">
+<h4 style="margin:0; font-size:15px; font-weight:900; display:flex; align-items:center; gap:10px; ">
+<i class="fa-solid fa-crosshairs" style="color:var(--accent-2)"></i> Red Dot
+            </h4>
+<span class="value-badge" id="sens-reddot-val">85%</span>
+</div>
+<p class="muted">Tùy chỉnh độ nhạy khi ngắm gần.</p>
+<div class="slider-wrapper">
+<input class="custom-slider sensitivity-slider" id="sens-reddot" max="100" min="1" type="range" value="85"/>
+</div>
+</div>
+<div class="card">
+<div class="control-header">
+<h4 style="margin:0; font-size:15px; font-weight:900; display:flex; align-items:center; gap:10px; ">
+<i class="fa-solid fa-binoculars" style="color:var(--accent-2)"></i> 2x / 4x Scope
+            </h4>
+<span class="value-badge" id="sens-scope-val">75%</span>
+</div>
+<p class="muted">Tăng độ chính xác khi dùng ống ngắm tầm trung.</p>
+<div class="slider-wrapper">
+<input class="custom-slider sensitivity-slider" id="sens-scope" max="100" min="1" type="range" value="75"/>
+</div>
+</div>
+<div class="card">
+<div class="control-header">
+<h4 style="margin:0; font-size:15px; font-weight:900; display:flex; align-items:center; gap:10px; ">
+<i class="fa-solid fa-crosshairs" style="transform: rotate(45deg); color:var(--accent-2)"></i> Sniper Scope
+            </h4>
+<span class="value-badge" id="sens-sniper-val">50%</span>
+</div>
+<p class="muted">Điều chỉnh độ nhạy khi ngắm xa.</p>
+<div class="slider-wrapper">
+<input class="custom-slider sensitivity-slider" id="sens-sniper" max="100" min="1" type="range" value="50"/>
+</div>
+</div>
+<!-- Features demo -->
+<div class="card">
+<div class="card-head">
+<h4><i class="fa-solid fa-layer-group"></i> Chức năng bổ trợ</h4>
+<span class="status-pill warn"><i class="fa-solid fa-star"></i> NEW</span>
+</div>
+<div class="feature-list">
+<div class="feature-item">
+<div class="feature-item-info">
+<h5><i class="fa-solid fa-wand-magic-sparkles"></i> Aim Assist</h5>
+<p>Khi Kéo Tâm Sẽ Tự Bắt Tâm Vào Đầu Cho Tất Cả Mọi Loại Súng </p>
+</div>
+<label class="hex-switch">
+<input checked="" type="checkbox"/>
+<span class="hex-ui"></span>
+</label>
+</div>
+<div class="feature-item">
+<div class="feature-item-info">
+<h5><i class="fa-solid fa-memory"></i> Tối ưu RAM</h5>
+<p>Dọn cache UI, làm app nhẹ hơn</p>
+</div>
+<label class="hex-switch">
+<input checked="" type="checkbox"/>
+<span class="hex-ui"></span>
+</label>
+</div>
+<div class="feature-item">
+<div class="feature-item-info">
+<h5><i class="fa-solid fa-gauge-high"></i> Chế độ ổn định</h5>
+<p>Giảm độ trễ thao tác trong Game</p>
+</div>
+<label class="hex-switch">
+<input checked="" type="checkbox"/>
+<span class="hex-ui"></span>
+</label>
+</div>
+<div class="feature-item">
+<div class="feature-item-info">
+<h5><i class="fa-solid fa-sparkles"></i> Hiệu Ứng App</h5>
+<p>Hiệu Ứng Đẹp Mắt Khi Sử Dụng App</p>
+</div>
+<label class="hex-switch">
+<input checked="" onchange="setSetting('particles', this.checked)" type="checkbox"/>
+<span class="hex-ui"></span>
+</label>
+</div>
+</div>
+</div>
+<footer class="dark-footer">
+<div class="footer-brand">HVH SUPER</div>
+<div class="footer-text">
+            Phien Bản App Hỗ Trợ Kéo Tâm Free Fire Ob52 , Kéo Là Đỏ Siêu Cấp Vip<br/>
+            ©2026 Bản quyền thuộc về Ha Van Huan Ông Trùm Dev
+          </div>
+<div class="social-links">
+<a class="social-link" href="https://www.facebook.com/share/1E3tPVcWYa/?mibextid=wwXIfr" rel="noopener" target="_blank"><i class="fa-brands fa-facebook-f"></i></a>
+<a class="social-link" href="#" onclick="Swal.fire({title:'Twitter',icon:'info',text:'Bạn có thể gắn link Twitter tại đây.'}); return false;"><i class="fa-brands fa-twitter"></i></a>
+<a class="social-link" href="#" onclick="Swal.fire({title:'Website',icon:'info',text:'Bạn có thể gắn website tại đây.'}); return false;"><i class="fa-solid fa-globe"></i></a>
+</div>
+</footer>
+</section>
+<!-- TOOLS -->
+<section class="page" id="page-tools">
+<div class="section-title">Tools • Preset &amp; Quick Actions</div>
+<p class="section-sub">Các tools này chỉ thay đổi thông số hiển thị trong app và đang được cải tiến thêm</p>
+<div class="card">
+<div class="card-head">
+<h4><i class="fa-solid fa-wand-magic-sparkles"></i> Preset chuyên sâu</h4>
+<span class="status-pill ok"><i class="fa-solid fa-bolt"></i> READY</span>
+</div>
+<div class="grid-2">
+<div class="tile">
+<h5><i class="fa-solid fa-feather-pointed"></i> Smooth Pack</h5>
+<p>Preset mượt, ưu tiên kéo tâm êm và ổn định.</p>
+<div class="preset-row">
+<button class="preset-btn" onclick="applyPreset('smooth')"><i class="fa-solid fa-check"></i> Apply</button>
+<button class="preset-btn" onclick="menuGo('page-home')"><i class="fa-solid fa-arrow-left"></i> Về Home</button>
+</div>
+</div>
+<div class="tile">
+<h5><i class="fa-solid fa-crosshairs"></i> Headshot Pack</h5>
+<p>Preset headshot, nhạy hơn cho ngắm gần.</p>
+<div class="preset-row">
+<button class="preset-btn" onclick="applyPreset('headshot')"><i class="fa-solid fa-check"></i> Apply</button>
+<button class="preset-btn" onclick="menuGo('page-home')"><i class="fa-solid fa-arrow-left"></i> Về Home</button>
+</div>
+</div>
+<div class="tile">
+<h5><i class="fa-solid fa-scale-balanced"></i> Balanced Pack</h5>
+<p>Cân bằng cho đa số thiết bị.</p>
+<div class="preset-row">
+<button class="preset-btn" onclick="applyPreset('balanced')"><i class="fa-solid fa-check"></i> Apply</button>
+<button class="preset-btn" onclick="menuGo('page-home')"><i class="fa-solid fa-arrow-left"></i> Về Home</button>
+</div>
+</div>
+<div class="tile">
+<h5><i class="fa-solid fa-binoculars"></i> Sniper Pack</h5>
+<p>Giảm nhạy để ngắm xa ổn định.</p>
+<div class="preset-row">
+<button class="preset-btn" onclick="applyPreset('sniper')"><i class="fa-solid fa-check"></i> Apply</button>
+<button class="preset-btn" onclick="menuGo('page-home')"><i class="fa-solid fa-arrow-left"></i> Về Home</button>
+</div>
+</div>
+</div>
+<hr class="sep"/>
+<div class="key-actions">
+<button class="chip-btn" onclick="Swal.fire({title:'Lưu preset',icon:'info',text:'Chức Năng Đang Được Cải Tiến Và Mở Rộng Thêm! Xin Cảm Ơn Mem.'})"><i class="fa-solid fa-floppy-disk"></i> Lưu preset (demo)</button>
+<button class="chip-btn" onclick="Swal.fire({title:'Chia sẻ preset',icon:'info',text:'Chức Năng Đang Được Cải Tiến Và Mở Rộng Thêm! Xin Cảm Ơn Mem.'})"><i class="fa-solid fa-share-nodes"></i> Share preset (demo)</button>
+</div>
+</div>
+</section>
+<!-- CHECK KEY -->
+<section class="page" id="page-checkkey">
+<div class="section-title">Kiểm tra Key</div>
+<p class="section-sub">Tab này hiển thị trạng thái, hạn sử dụng, số thiết bị, last login và ghi chú của key hiện tại.</p>
+<div class="card" id="key-info-card">
+<div class="card-head">
+<h4><i class="fa-solid fa-id-card"></i> Thông tin Key đang dùng</h4>
+<span class="status-pill" id="keyStatusPill"><i class="fa-solid fa-circle-notch fa-spin"></i> Đang tải</span>
+</div>
+<p class="muted">Hiển thị trạng thái, hạn sử dụng, số thiết bị, và thông tin liên quan của key hiện tại.</p>
+<div class="key-grid">
+<div class="key-box">
+<div class="key-label">KEY</div>
+<div class="key-value mono" id="infoKey"><span class="skeleton" style="height:14px"></span></div>
+</div>
+<div class="key-box">
+<div class="key-label">DEVICE ID</div>
+<div class="key-value mono" id="infoDevice"><span class="skeleton" style="height:14px"></span></div>
+</div>
+<div class="key-box">
+<div class="key-label">HẾT HẠN</div>
+<div class="key-value" id="infoExpire"><span class="skeleton" style="height:14px"></span></div>
+</div>
+<div class="key-box">
+<div class="key-label">THIẾT BỊ (ĐÃ DÙNG / TỐI ĐA)</div>
+<div class="key-value" id="infoDevices"><span class="skeleton" style="height:14px"></span></div>
+</div>
+<div class="key-box">
+<div class="key-label">LAST LOGIN</div>
+<div class="key-value" id="infoLastLogin"><span class="skeleton" style="height:14px"></span></div>
+</div>
+<div class="key-box">
+<div class="key-label">GHI CHÚ</div>
+<div class="key-value" id="infoNote"><span class="skeleton" style="height:14px"></span></div>
+</div>
+</div>
+<div class="key-actions">
+<button class="chip-btn" onclick="refreshKeyInfo()"><i class="fa-solid fa-rotate"></i> Làm mới</button>
+<button class="chip-btn" onclick="copyCurrentKey()"><i class="fa-solid fa-copy"></i> Copy Key</button>
+<button class="chip-btn" onclick="copyDeviceId()"><i class="fa-solid fa-fingerprint"></i> Copy Device</button>
+<button class="chip-btn" onclick="menuGo('page-devices')"><i class="fa-solid fa-microchip"></i> Quản lý thiết bị</button>
+</div>
+</div>
+<div class="card">
+<div class="card-head">
+<h4><i class="fa-solid fa-microchip"></i> Thiết bị gần đây</h4>
+<span class="status-pill"><i class="fa-solid fa-circle-info"></i> Preview</span>
+</div>
+<p class="muted">Hiển thị tối đa 4 thiết bị gần nhất. Vào tab <b>Thiết bị</b> để xem đầy đủ và xoá thiết bị.</p>
+<div id="miniDevices"></div>
+</div>
+</section>
+<!-- DEVICES -->
+<section class="page" id="page-devices">
+<div class="section-title">Thiết bị</div>
+<p class="section-sub">Danh sách thiết bị đang dùng key. Bạn có thể xoá từng thiết bị hoặc reset toàn bộ</p>
+<div class="card">
+<div class="card-head">
+<h4><i class="fa-solid fa-microchip"></i> Danh sách thiết bị</h4>
+<span class="status-pill" id="devicesStatus"><i class="fa-solid fa-circle-notch fa-spin"></i> Đang tải</span>
+</div>
+<p class="muted">⭐ = thiết bị hiện tại. Xóa thiết bị hiện tại có thể khiến bạn phải đăng nhập lại.</p>
+<div class="device-list" id="devicesList"></div>
+<div class="key-actions" style="margin-top:14px">
+<button class="chip-btn" onclick="resetAllDevices()"><i class="fa-solid fa-broom"></i> Reset toàn bộ thiết bị</button>
+<button class="chip-btn" onclick="menuGo('page-checkkey')"><i class="fa-solid fa-arrow-left"></i> Về Check Key</button>
+</div>
+</div>
+</section>
+<!-- SETTINGS -->
+<section class="page" id="page-settings">
+<div class="section-title">Cài đặt UI</div>
+<p class="section-sub">Tùy chỉnh hiệu ứng click “tạch”, rung, particles, giảm chuyển động và đổi accent màu.</p>
+<div class="card">
+<div class="card-head">
+<h4><i class="fa-solid fa-gear"></i> Cài đặt</h4>
+<span class="status-pill ok"><i class="fa-solid fa-check"></i> LIVE</span>
+</div>
+<div class="grid-2">
+<div class="tile">
+<h5><i class="fa-solid fa-bullseye"></i> Thông tin nhanh</h5>
+<p>Thiết bị &amp; key hiện tại.</p>
+<div class="key-grid" style="margin-top:0">
+<div class="key-box">
+<div class="key-label">DEVICE</div>
+<div class="key-value mono" id="st-device">—</div>
+</div>
+<div class="key-box">
+<div class="key-label">KEY</div>
+<div class="key-value mono" id="st-key">—</div>
+</div>
+</div>
+</div>
+<div class="tile">
+<h5><i class="fa-solid fa-palette"></i> Accent màu</h5>
+<p>Chọn màu chủ đạo cho UI.</p>
+<select class="input-control" id="st-accent" onchange="setSetting('accent', this.value)">
+<option value="gold">Gold (vàng)</option>
+<option value="aqua">Aqua (xanh)</option>
+</select>
+<div class="key-actions" style="margin-top:12px">
+<button class="chip-btn" onclick="Swal.fire({title:'Gợi ý',icon:'info',text:'Accent chỉ đổi màu UI (không ảnh hưởng logic key).'});"><i class="fa-solid fa-lightbulb"></i> Tip</button>
+</div>
+</div>
+</div>
+<hr class="sep"/>
+<div class="setting-row">
+<div class="left">
+<b>Click Sound “tạch”</b>
+<small>Bật âm click khi nhấn nút / chức năng.</small>
+</div>
+<label class="hex-switch">
+<input id="st-clicksound" onchange="setSetting('clickSound', this.checked)" type="checkbox"/>
+<span class="hex-ui"></span>
+</label>
+</div>
+<div style="height:10px"></div>
+<div class="setting-row">
+<div class="left">
+<b>Haptic (rung nhẹ)</b>
+<small>Chỉ hoạt động nếu thiết bị hỗ trợ <code>navigator.vibrate</code>.</small>
+</div>
+<label class="hex-switch">
+<input id="st-haptic" onchange="setSetting('haptic', this.checked)" type="checkbox"/>
+<span class="hex-ui"></span>
+</label>
+</div>
+<div style="height:10px"></div>
+<div class="setting-row">
+<div class="left">
+<b>Particles nền</b>
+<small>Hiệu ứng sao/đốm sáng nền (canvas).</small>
+</div>
+<label class="hex-switch">
+<input id="st-particles" onchange="setSetting('particles', this.checked)" type="checkbox"/>
+<span class="hex-ui"></span>
+</label>
+</div>
+<div style="height:10px"></div>
+<div class="setting-row">
+<div class="left">
+<b>Reduce Motion</b>
+<small>Giảm animation nếu máy yếu hoặc dễ chóng mặt.</small>
+</div>
+<label class="hex-switch">
+<input id="st-reducemotion" onchange="setSetting('reduceMotion', this.checked)" type="checkbox"/>
+<span class="hex-ui"></span>
+</label>
+</div>
+
+<hr class="sep"/>
+<div class="tile">
+<h5><i class="fa-solid fa-wand-magic-sparkles"></i> Hiệu ứng &amp; Font</h5>
+<p>Tùy chỉnh Aura/Glow, Blur kính, cỡ chữ và độ bo góc cho UI.</p>
+<div class="range-row">
+<div class="left">
+<b>Aura / Glow</b>
+<small>Độ sáng viền &amp; glow (0–120%).</small>
+</div>
+<div class="range">
+<input id="st-glow" max="120" min="0" oninput="setSetting('glow', Number(this.value)); document.getElementById('st-glow-val').textContent=this.value+'%';" type="range" value="95"/>
+<span class="range-val" id="st-glow-val">95%</span>
+</div>
+</div>
+<div class="range-row">
+<div class="left">
+<b>Blur (độ mờ kính)</b>
+<small>Mức blur nền cho các khung (6–24px).</small>
+</div>
+<div class="range">
+<input id="st-blur" max="24" min="6" oninput="setSetting('blur', Number(this.value)); document.getElementById('st-blur-val').textContent=this.value+'px';" type="range" value="16"/>
+<span class="range-val" id="st-blur-val">16px</span>
+</div>
+</div>
+<div class="range-row">
+<div class="left">
+<b>Cỡ chữ</b>
+<small>Tăng/giảm để đọc dễ hơn (90–110%).</small>
+</div>
+<div class="range">
+<input id="st-font" max="110" min="90" oninput="setSetting('fontScale', Number(this.value)); document.getElementById('st-font-val').textContent=this.value+'%';" type="range" value="100"/>
+<span class="range-val" id="st-font-val">100%</span>
+</div>
+</div>
+<div class="range-row">
+<div class="left">
+<b>Bo góc</b>
+<small>Độ cong viền card/tile (18–34px).</small>
+</div>
+<div class="range">
+<input id="st-round" max="34" min="18" oninput="setSetting('roundness', Number(this.value)); document.getElementById('st-round-val').textContent=this.value+'px';" type="range" value="26"/>
+<span class="range-val" id="st-round-val">26px</span>
+</div>
+</div>
+<div class="key-actions" style="margin-top:12px">
+<button class="chip-btn" onclick="toastInfo('Tip: Nếu thấy nặng máy, giảm Glow xuống ~60% và tắt Particles.');">
+<i class="fa-solid fa-lightbulb"></i> Tip hiệu năng
+    </button>
+</div>
+</div>
+<div class="key-actions" style="margin-top:14px">
+<button class="chip-btn" onclick="resetSettings()"><i class="fa-solid fa-rotate-left"></i> Reset cài đặt</button>
+<button class="chip-btn" onclick="Swal.fire({title:'Lưu ý',icon:'info',text:'Một số hiệu ứng âm thanh có thể bị chặn nếu chưa tương tác lần đầu.'})"><i class="fa-solid fa-shield-halved"></i> Lưu ý</button>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<!-- App JS -->
+<script src="assets/app.js"></script>
+</body>
+</html>
